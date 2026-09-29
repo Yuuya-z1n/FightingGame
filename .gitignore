@@ -6,6 +6,7 @@
 # See: https://github.com/github/gitignore/tree/main/Global
 #
 /[Ff]ighting [Gg]ame/.utmp/
+/[Ff]ighting [Gg]ame/[Aa]ssets/SkySeries Freebie/
 /[Ff]ighting [Gg]ame/[Ll]ibrary/
 /[Ff]ighting [Gg]ame/[Tt]emp/
 /[Ff]ighting [Gg]ame/[Oo]bj/
