@@ -38,13 +38,11 @@ public class ButtonSelect : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             ChangeButton(-1);
-            Debug.Log("A‚ð‰Ÿ‚µ‚Ä‚¢‚é");
 
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
             ChangeButton(1);
-            Debug.Log("D‚ð‰Ÿ‚µ‚Ä‚¢‚é");
         }
     }
 
@@ -52,14 +50,17 @@ public class ButtonSelect : MonoBehaviour
     {
         selectedIndex += dir;
 
+
         if (selectedIndex >= buttons.Length)
         {
-            selectedIndex = buttons.Length;
+            selectedIndex = buttons.Length-1;
+            Debug.Log(selectedIndex);
         }
 
         if (selectedIndex <= 0)
         {
             selectedIndex = 0;
+            Debug.Log(selectedIndex);
         }
     }
 }
