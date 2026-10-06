@@ -71,6 +71,9 @@
 # Mono auto generated files
 /[Ff]ighting [Gg]ame/mono_crash.*
 
+# Unity meta files
+*.meta
+
 # Builds
 /[Ff]ighting [Gg]ame/*.apk
 /[Ff]ighting [Gg]ame/*.aab
