@@ -133,7 +133,6 @@ GameObject:
   - component: {fileID: 34154344}
   - component: {fileID: 34154346}
   - component: {fileID: 34154345}
-  - component: {fileID: 34154347}
   m_Layer: 5
   m_Name: LightAttackDamage
   m_TagString: Untagged
@@ -260,23 +259,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34154343}
   m_CullTransparentMesh: 1
---- !u!114 &34154347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 34154343}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 686317435}
-  buttons:
-  - {fileID: 1554405483}
-  - {fileID: 616187068}
-  - {fileID: 560044227}
 --- !u!1 &96365292
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,7 +270,6 @@ GameObject:
   - component: {fileID: 96365293}
   - component: {fileID: 96365295}
   - component: {fileID: 96365294}
-  - component: {fileID: 96365296}
   m_Layer: 5
   m_Name: AttackPage
   m_TagString: Untagged
@@ -354,23 +335,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 96365292}
   m_CullTransparentMesh: 1
---- !u!114 &96365296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 96365292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a6042e6b7e2064787631414b7783e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChangeItem:
-  - {fileID: 686317435}
-  - {fileID: 2132793944}
-  - {fileID: 1739655981}
-  selectedIndex: 0
 --- !u!1 &160181775
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,7 +349,7 @@ GameObject:
   - component: {fileID: 160181777}
   m_Layer: 5
   m_Name: TriggerFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -607,7 +571,7 @@ GameObject:
   - component: {fileID: 222077832}
   m_Layer: 5
   m_Name: DamageHigh
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -953,7 +917,7 @@ GameObject:
   - component: {fileID: 266599377}
   m_Layer: 5
   m_Name: StunFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1073,7 +1037,7 @@ GameObject:
   - component: {fileID: 317793237}
   m_Layer: 5
   m_Name: StunFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1269,7 +1233,7 @@ GameObject:
   - component: {fileID: 396241767}
   m_Layer: 5
   m_Name: DamageLow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1386,7 +1350,6 @@ GameObject:
   - component: {fileID: 403786043}
   - component: {fileID: 403786045}
   - component: {fileID: 403786044}
-  - component: {fileID: 403786046}
   m_Layer: 5
   m_Name: MediumAttackDamage
   m_TagString: Untagged
@@ -1513,23 +1476,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 403786042}
   m_CullTransparentMesh: 1
---- !u!114 &403786046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 403786042}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 2132793944}
-  buttons:
-  - {fileID: 1805225698}
-  - {fileID: 1705511034}
-  - {fileID: 222077832}
 --- !u!1 &405513119
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,7 +1487,6 @@ GameObject:
   - component: {fileID: 405513120}
   - component: {fileID: 405513122}
   - component: {fileID: 405513121}
-  - component: {fileID: 405513123}
   m_Layer: 5
   m_Name: MediumAttackTrigger
   m_TagString: Untagged
@@ -1668,23 +1613,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 405513119}
   m_CullTransparentMesh: 1
---- !u!114 &405513123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 405513119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 2132793944}
-  buttons:
-  - {fileID: 489629228}
-  - {fileID: 823653658}
-  - {fileID: 160181777}
 --- !u!1 &489629226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,7 +1627,7 @@ GameObject:
   - component: {fileID: 489629228}
   m_Layer: 5
   m_Name: TriggerSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1819,7 +1747,7 @@ GameObject:
   - component: {fileID: 560044227}
   m_Layer: 5
   m_Name: DamageHigh
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1936,7 +1864,6 @@ GameObject:
   - component: {fileID: 566761229}
   - component: {fileID: 566761231}
   - component: {fileID: 566761230}
-  - component: {fileID: 566761232}
   m_Layer: 5
   m_Name: MediumAttackStun
   m_TagString: Untagged
@@ -2063,23 +1990,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 566761228}
   m_CullTransparentMesh: 1
---- !u!114 &566761232
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 566761228}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 2132793944}
-  buttons:
-  - {fileID: 1865409934}
-  - {fileID: 2119846355}
-  - {fileID: 1957265761}
 --- !u!1 &616187066
 GameObject:
   m_ObjectHideFlags: 0
@@ -2094,7 +2004,7 @@ GameObject:
   - component: {fileID: 616187068}
   m_Layer: 5
   m_Name: DamageMidium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2211,7 +2121,6 @@ GameObject:
   - component: {fileID: 652886267}
   - component: {fileID: 652886269}
   - component: {fileID: 652886268}
-  - component: {fileID: 652886270}
   m_Layer: 5
   m_Name: LightAttackStun
   m_TagString: Untagged
@@ -2338,23 +2247,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 652886266}
   m_CullTransparentMesh: 1
---- !u!114 &652886270
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 652886266}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 686317435}
-  buttons:
-  - {fileID: 1122334325}
-  - {fileID: 1730894120}
-  - {fileID: 266599377}
 --- !u!1 &686317435
 GameObject:
   m_ObjectHideFlags: 0
@@ -2366,7 +2258,6 @@ GameObject:
   - component: {fileID: 686317436}
   - component: {fileID: 686317438}
   - component: {fileID: 686317437}
-  - component: {fileID: 686317439}
   m_Layer: 5
   m_Name: LightAttack
   m_TagString: Untagged
@@ -2493,23 +2384,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 686317435}
   m_CullTransparentMesh: 1
---- !u!114 &686317439
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 686317435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a6042e6b7e2064787631414b7783e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChangeItem:
-  - {fileID: 34154343}
-  - {fileID: 1207649116}
-  - {fileID: 652886266}
-  selectedIndex: 0
 --- !u!1 &711285731
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,7 +2395,6 @@ GameObject:
   - component: {fileID: 711285732}
   - component: {fileID: 711285734}
   - component: {fileID: 711285733}
-  - component: {fileID: 711285735}
   m_Layer: 5
   m_Name: MajorAttackTrigger
   m_TagString: Untagged
@@ -2648,23 +2521,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 711285731}
   m_CullTransparentMesh: 1
---- !u!114 &711285735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 711285731}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 1739655981}
-  buttons:
-  - {fileID: 1777419431}
-  - {fileID: 1878488301}
-  - {fileID: 1954758165}
 --- !u!1 &780443556
 GameObject:
   m_ObjectHideFlags: 0
@@ -2679,7 +2535,7 @@ GameObject:
   - component: {fileID: 780443558}
   m_Layer: 5
   m_Name: DamageHigh
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2796,6 +2652,7 @@ GameObject:
   - component: {fileID: 814535827}
   - component: {fileID: 814535829}
   - component: {fileID: 814535828}
+  - component: {fileID: 814535830}
   m_Layer: 5
   m_Name: SaveButton
   m_TagString: Untagged
@@ -2860,6 +2717,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 814535826}
   m_CullTransparentMesh: 1
+--- !u!114 &814535830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814535826}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d3f53cdc59e45f4da7d660e67216022, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackCustum: {fileID: 2023351810}
 --- !u!1 &823653656
 GameObject:
   m_ObjectHideFlags: 0
@@ -2874,7 +2744,7 @@ GameObject:
   - component: {fileID: 823653658}
   m_Layer: 5
   m_Name: TriggerMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3062,7 +2932,7 @@ GameObject:
   - component: {fileID: 1112587357}
   m_Layer: 5
   m_Name: StunSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3182,7 +3052,7 @@ GameObject:
   - component: {fileID: 1122334325}
   m_Layer: 5
   m_Name: StunSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3302,7 +3172,7 @@ GameObject:
   - component: {fileID: 1125801923}
   m_Layer: 5
   m_Name: DamageMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3553,7 +3423,6 @@ GameObject:
   - component: {fileID: 1207649117}
   - component: {fileID: 1207649119}
   - component: {fileID: 1207649118}
-  - component: {fileID: 1207649120}
   m_Layer: 5
   m_Name: LightAttackTrigger
   m_TagString: Untagged
@@ -3680,23 +3549,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1207649116}
   m_CullTransparentMesh: 1
---- !u!114 &1207649120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207649116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 686317435}
-  buttons:
-  - {fileID: 1214134617}
-  - {fileID: 1971432618}
-  - {fileID: 1697390147}
 --- !u!1 &1214134615
 GameObject:
   m_ObjectHideFlags: 0
@@ -3711,7 +3563,7 @@ GameObject:
   - component: {fileID: 1214134617}
   m_Layer: 5
   m_Name: TriggerSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3903,7 +3755,6 @@ GameObject:
   - component: {fileID: 1409132302}
   - component: {fileID: 1409132304}
   - component: {fileID: 1409132303}
-  - component: {fileID: 1409132305}
   m_Layer: 5
   m_Name: MajorAttackDamage
   m_TagString: Untagged
@@ -4030,23 +3881,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1409132301}
   m_CullTransparentMesh: 1
---- !u!114 &1409132305
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1409132301}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 1739655981}
-  buttons:
-  - {fileID: 396241767}
-  - {fileID: 1125801923}
-  - {fileID: 780443558}
 --- !u!1 &1472496699
 GameObject:
   m_ObjectHideFlags: 0
@@ -4201,7 +4035,7 @@ GameObject:
   - component: {fileID: 1554405483}
   m_Layer: 5
   m_Name: DamageLow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4321,7 +4155,7 @@ GameObject:
   - component: {fileID: 1689015695}
   m_Layer: 5
   m_Name: StunMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4441,7 +4275,7 @@ GameObject:
   - component: {fileID: 1697390147}
   m_Layer: 5
   m_Name: TriggerFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4561,7 +4395,7 @@ GameObject:
   - component: {fileID: 1705511034}
   m_Layer: 5
   m_Name: DamageMidium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4681,7 +4515,7 @@ GameObject:
   - component: {fileID: 1730894120}
   m_Layer: 5
   m_Name: StunMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4798,7 +4632,6 @@ GameObject:
   - component: {fileID: 1739655982}
   - component: {fileID: 1739655984}
   - component: {fileID: 1739655983}
-  - component: {fileID: 1739655985}
   m_Layer: 5
   m_Name: MajorAttack
   m_TagString: Untagged
@@ -4925,23 +4758,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1739655981}
   m_CullTransparentMesh: 1
---- !u!114 &1739655985
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1739655981}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a6042e6b7e2064787631414b7783e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChangeItem:
-  - {fileID: 1409132301}
-  - {fileID: 711285731}
-  - {fileID: 2114513472}
-  selectedIndex: 0
 --- !u!1 &1777419429
 GameObject:
   m_ObjectHideFlags: 0
@@ -4956,7 +4772,7 @@ GameObject:
   - component: {fileID: 1777419431}
   m_Layer: 5
   m_Name: TriggerSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5076,7 +4892,7 @@ GameObject:
   - component: {fileID: 1805225698}
   m_Layer: 5
   m_Name: DamageLow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5196,7 +5012,7 @@ GameObject:
   - component: {fileID: 1865409934}
   m_Layer: 5
   m_Name: StunSlow
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5316,7 +5132,7 @@ GameObject:
   - component: {fileID: 1878488301}
   m_Layer: 5
   m_Name: TriggerMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5436,7 +5252,7 @@ GameObject:
   - component: {fileID: 1954758165}
   m_Layer: 5
   m_Name: TriggerFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5556,7 +5372,7 @@ GameObject:
   - component: {fileID: 1957265761}
   m_Layer: 5
   m_Name: StunFast
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5676,7 +5492,7 @@ GameObject:
   - component: {fileID: 1971432618}
   m_Layer: 5
   m_Name: TriggerMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5791,6 +5607,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2023351809}
+  - component: {fileID: 2023351810}
   m_Layer: 0
   m_Name: AttackManager
   m_TagString: Untagged
@@ -5819,6 +5636,86 @@ Transform:
   - {fileID: 814535827}
   m_Father: {fileID: 194323985}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2023351810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023351808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d5c0898cd4efa84f80d2bea3aaf1d4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pageIndex: 0
+  attacks:
+  - label: "\u5C0F\u653B\u6483"
+    damage:
+      buttons:
+      - {fileID: 1554405483}
+      - {fileID: 616187068}
+      - {fileID: 560044227}
+      optionValues: c80000002c01000090010000
+    startup:
+      buttons:
+      - {fileID: 1214134617}
+      - {fileID: 1971432618}
+      - {fileID: 1697390147}
+      optionValues: 030000000400000005000000
+    recovery:
+      buttons:
+      - {fileID: 1122334325}
+      - {fileID: 1730894120}
+      - {fileID: 266599377}
+      optionValues: 08000000090000000a000000
+  - label: "\u4E2D\u653B\u6483"
+    damage:
+      buttons:
+      - {fileID: 1805225698}
+      - {fileID: 1705511034}
+      - {fileID: 222077832}
+      optionValues: 260200008a020000ee020000
+    startup:
+      buttons:
+      - {fileID: 489629228}
+      - {fileID: 823653658}
+      - {fileID: 160181777}
+      optionValues: 06000000080000000a000000
+    recovery:
+      buttons:
+      - {fileID: 1865409934}
+      - {fileID: 2119846355}
+      - {fileID: 1957265761}
+      optionValues: 0d0000000f00000013000000
+  - label: "\u5927\u653B\u6483"
+    damage:
+      buttons:
+      - {fileID: 396241767}
+      - {fileID: 1125801923}
+      - {fileID: 780443558}
+      optionValues: ee02000052030000b6030000
+    startup:
+      buttons:
+      - {fileID: 1777419431}
+      - {fileID: 1878488301}
+      - {fileID: 1954758165}
+      optionValues: 080000000b0000000e000000
+    recovery:
+      buttons:
+      - {fileID: 1112587357}
+      - {fileID: 1689015695}
+      - {fileID: 317793237}
+      optionValues: 100000001300000016000000
+  prevAttackAction: {fileID: -422802839862224506, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
+  nextAttackAction: {fileID: -6143870010954141173, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
+  navigateAction: {fileID: 1903732727725527103, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
+  decideAction: {fileID: 1615782176854435058, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
+  enableKeyboard: 1
+  selectedColor: {r: 1, g: 0, b: 0, a: 1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  attackIndex: 2
+  rowIndex: 2
 --- !u!1 &2114513472
 GameObject:
   m_ObjectHideFlags: 0
@@ -5830,7 +5727,6 @@ GameObject:
   - component: {fileID: 2114513473}
   - component: {fileID: 2114513475}
   - component: {fileID: 2114513474}
-  - component: {fileID: 2114513476}
   m_Layer: 5
   m_Name: MajorAttackStun
   m_TagString: Untagged
@@ -5957,23 +5853,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114513472}
   m_CullTransparentMesh: 1
---- !u!114 &2114513476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2114513472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63eaea3d88d3b7a429479d143ccd80c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SelectmyParent: {fileID: 1739655981}
-  buttons:
-  - {fileID: 1112587357}
-  - {fileID: 1689015695}
-  - {fileID: 317793237}
 --- !u!1 &2119846353
 GameObject:
   m_ObjectHideFlags: 0
@@ -5988,7 +5867,7 @@ GameObject:
   - component: {fileID: 2119846355}
   m_Layer: 5
   m_Name: StunMedium
-  m_TagString: Untagged
+  m_TagString: Button
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6105,7 +5984,6 @@ GameObject:
   - component: {fileID: 2132793945}
   - component: {fileID: 2132793947}
   - component: {fileID: 2132793946}
-  - component: {fileID: 2132793948}
   m_Layer: 5
   m_Name: MediumAttack
   m_TagString: Untagged
@@ -6232,23 +6110,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2132793944}
   m_CullTransparentMesh: 1
---- !u!114 &2132793948
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2132793944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18a6042e6b7e2064787631414b7783e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ChangeItem:
-  - {fileID: 403786042}
-  - {fileID: 405513119}
-  - {fileID: 566761228}
-  selectedIndex: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
