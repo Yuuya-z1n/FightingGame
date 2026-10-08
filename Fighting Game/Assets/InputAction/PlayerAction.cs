@@ -147,9 +147,54 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Select"",
+                    ""name"": ""NavigateAction"",
+                    ""type"": ""Value"",
+                    ""id"": ""75e4804f-1015-47c9-b156-6ea68f55ea8f"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Decide"",
                     ""type"": ""Button"",
-                    ""id"": ""a9ea1eff-fcf3-439d-b25b-a331ef2909ca"",
+                    ""id"": ""92a7e4fe-fbca-42cc-bde1-457d40cd97b4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Prev"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8b82401-f286-478e-aa5c-0f279601c0bd"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Next"",
+                    ""type"": ""Button"",
+                    ""id"": ""0a4a670a-adf5-4475-9e43-a4cb64c04b09"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""NextPage"",
+                    ""type"": ""Button"",
+                    ""id"": ""69164829-a801-4745-be2e-4c98dfd414be"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""PrevPage"",
+                    ""type"": ""Button"",
+                    ""id"": ""bde74e27-af6e-4657-a363-8a4c3b5ee6cc"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -335,67 +380,67 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""619c0b2c-843f-48cb-8470-ec424f040fdd"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Select"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8d2f92aa-3ad5-440e-845b-b4c2fec90d46"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Select"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""887ce939-5917-4085-90d7-057346aa3abf"",
+                    ""id"": ""ed7c3238-35b1-46d6-9ad6-9ab35fe222b2"",
                     ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Select"",
+                    ""action"": ""Decide"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""52be6d06-ea57-453e-bf91-75b04bef643a"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Select"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8b058364-f36f-48c6-808c-e44839986768"",
+                    ""id"": ""5a056dc4-6a82-403a-b24a-c0febb1e7141"",
                     ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Select"",
+                    ""action"": ""Prev"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""310ac37e-13fa-4363-873b-3876efb5c4f9"",
+                    ""id"": ""284d417a-f4aa-4ae1-911c-458744a31894"",
                     ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Select"",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6bc51535-69bb-4ee5-991c-36d265147eec"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NavigateAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b2ab64a0-a22b-40c6-a080-6e76b5930851"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""NextPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e4b6e52-12d1-48ee-8350-5d5288418e5d"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PrevPage"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -412,7 +457,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_HeavyAttack = m_Player.FindAction("HeavyAttack", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
         m_Player_Assist = m_Player.FindAction("Assist", throwIfNotFound: true);
-        m_Player_Select = m_Player.FindAction("Select", throwIfNotFound: true);
+        m_Player_NavigateAction = m_Player.FindAction("NavigateAction", throwIfNotFound: true);
+        m_Player_Decide = m_Player.FindAction("Decide", throwIfNotFound: true);
+        m_Player_Prev = m_Player.FindAction("Prev", throwIfNotFound: true);
+        m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
+        m_Player_NextPage = m_Player.FindAction("NextPage", throwIfNotFound: true);
+        m_Player_PrevPage = m_Player.FindAction("PrevPage", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -499,7 +549,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_HeavyAttack;
     private readonly InputAction m_Player_Throw;
     private readonly InputAction m_Player_Assist;
-    private readonly InputAction m_Player_Select;
+    private readonly InputAction m_Player_NavigateAction;
+    private readonly InputAction m_Player_Decide;
+    private readonly InputAction m_Player_Prev;
+    private readonly InputAction m_Player_Next;
+    private readonly InputAction m_Player_NextPage;
+    private readonly InputAction m_Player_PrevPage;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -536,9 +591,29 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Assist => m_Wrapper.m_Player_Assist;
         /// <summary>
-        /// Provides access to the underlying input action "Player/Select".
+        /// Provides access to the underlying input action "Player/NavigateAction".
         /// </summary>
-        public InputAction @Select => m_Wrapper.m_Player_Select;
+        public InputAction @NavigateAction => m_Wrapper.m_Player_NavigateAction;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Decide".
+        /// </summary>
+        public InputAction @Decide => m_Wrapper.m_Player_Decide;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Prev".
+        /// </summary>
+        public InputAction @Prev => m_Wrapper.m_Player_Prev;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Next".
+        /// </summary>
+        public InputAction @Next => m_Wrapper.m_Player_Next;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/NextPage".
+        /// </summary>
+        public InputAction @NextPage => m_Wrapper.m_Player_NextPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/PrevPage".
+        /// </summary>
+        public InputAction @PrevPage => m_Wrapper.m_Player_PrevPage;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -583,9 +658,24 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Assist.started += instance.OnAssist;
             @Assist.performed += instance.OnAssist;
             @Assist.canceled += instance.OnAssist;
-            @Select.started += instance.OnSelect;
-            @Select.performed += instance.OnSelect;
-            @Select.canceled += instance.OnSelect;
+            @NavigateAction.started += instance.OnNavigateAction;
+            @NavigateAction.performed += instance.OnNavigateAction;
+            @NavigateAction.canceled += instance.OnNavigateAction;
+            @Decide.started += instance.OnDecide;
+            @Decide.performed += instance.OnDecide;
+            @Decide.canceled += instance.OnDecide;
+            @Prev.started += instance.OnPrev;
+            @Prev.performed += instance.OnPrev;
+            @Prev.canceled += instance.OnPrev;
+            @Next.started += instance.OnNext;
+            @Next.performed += instance.OnNext;
+            @Next.canceled += instance.OnNext;
+            @NextPage.started += instance.OnNextPage;
+            @NextPage.performed += instance.OnNextPage;
+            @NextPage.canceled += instance.OnNextPage;
+            @PrevPage.started += instance.OnPrevPage;
+            @PrevPage.performed += instance.OnPrevPage;
+            @PrevPage.canceled += instance.OnPrevPage;
         }
 
         /// <summary>
@@ -615,9 +705,24 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @Assist.started -= instance.OnAssist;
             @Assist.performed -= instance.OnAssist;
             @Assist.canceled -= instance.OnAssist;
-            @Select.started -= instance.OnSelect;
-            @Select.performed -= instance.OnSelect;
-            @Select.canceled -= instance.OnSelect;
+            @NavigateAction.started -= instance.OnNavigateAction;
+            @NavigateAction.performed -= instance.OnNavigateAction;
+            @NavigateAction.canceled -= instance.OnNavigateAction;
+            @Decide.started -= instance.OnDecide;
+            @Decide.performed -= instance.OnDecide;
+            @Decide.canceled -= instance.OnDecide;
+            @Prev.started -= instance.OnPrev;
+            @Prev.performed -= instance.OnPrev;
+            @Prev.canceled -= instance.OnPrev;
+            @Next.started -= instance.OnNext;
+            @Next.performed -= instance.OnNext;
+            @Next.canceled -= instance.OnNext;
+            @NextPage.started -= instance.OnNextPage;
+            @NextPage.performed -= instance.OnNextPage;
+            @NextPage.canceled -= instance.OnNextPage;
+            @PrevPage.started -= instance.OnPrevPage;
+            @PrevPage.performed -= instance.OnPrevPage;
+            @PrevPage.canceled -= instance.OnPrevPage;
         }
 
         /// <summary>
@@ -701,11 +806,46 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnAssist(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "NavigateAction" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSelect(InputAction.CallbackContext context);
+        void OnNavigateAction(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Decide" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDecide(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Prev" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPrev(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Next" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNext(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "NextPage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNextPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "PrevPage" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPrevPage(InputAction.CallbackContext context);
     }
 }
