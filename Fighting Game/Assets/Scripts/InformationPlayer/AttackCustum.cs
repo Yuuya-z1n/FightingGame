@@ -16,8 +16,8 @@ using UnityEngine.UI;
 /// </summary>
 public class AttackCustum : MonoBehaviour
 {
-    //[SerializeField] GameObject normalAttackPage;
-    //[SerializeField] GameObject specialAttackPage;
+    [SerializeField] GameObject normalAttackPage;
+    [SerializeField] GameObject specialAttackPage;
 
     public int pageIndex = 0;
     [Serializable]
@@ -46,12 +46,14 @@ public class AttackCustum : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] InputActionReference prevAttackAction; // LB (Button)
     [SerializeField] InputActionReference nextAttackAction; // RB (Button)
+    [SerializeField] InputActionReference prevPageAction; // LT (Button)
+    [SerializeField] InputActionReference nextPageAction; // RT (Button)
     [SerializeField] InputActionReference navigateAction;   // D-pad (Vector2)
     [SerializeField] InputActionReference decideAction;     // A  (Button)
 
     [Header("キーボード")]
     [SerializeField] bool enableKeyboard = true;
-    InputAction kbPrev, kbNext, kbNavigate, kbDecide;
+    InputAction kbPrev, kbNext, kbNavigate, kbDecide, kbNextPage,kbPrevPage;
 
     [Header("色")]
     [SerializeField] Color selectedColor = Color.red;
@@ -71,6 +73,8 @@ public class AttackCustum : MonoBehaviour
 
         kbPrev = new InputAction("KbPrevAttack", InputActionType.Button, "<Keyboard>/q");
         kbNext = new InputAction("KbNextAttack", InputActionType.Button, "<Keyboard>/e");
+        kbPrevPage = new InputAction("KbPrevPage", InputActionType.Button, "<Keyboard>/q");
+        kbNextPage = new InputAction("KbNextPage", InputActionType.Button, "<Keyboard>/e");
         kbDecide = new InputAction("KbDecide", InputActionType.Button, "<Keyboard>/space");
 
         kbNavigate = new InputAction("KbNavigate", InputActionType.Value);
@@ -80,10 +84,13 @@ public class AttackCustum : MonoBehaviour
             .With("Left", "<Keyboard>/a")
             .With("Right", "<Keyboard>/d");
     }
+
     void OnEnable()
     {
         Enable(prevAttackAction);
         Enable(nextAttackAction);
+        Enable(prevPageAction);
+        Enable(nextPageAction);
         Enable(navigateAction);
         Enable(decideAction);
 
@@ -98,6 +105,8 @@ public class AttackCustum : MonoBehaviour
     {
         kbPrev?.Disable();
         kbNext?.Disable();
+        kbPrevPage?.Disable();
+        kbNextPage?.Disable();
         kbNavigate?.Disable();
         kbDecide?.Disable();
     }
@@ -106,6 +115,8 @@ public class AttackCustum : MonoBehaviour
     {
         kbPrev?.Dispose();
         kbNext?.Dispose();
+        kbPrevPage?.Dispose();
+        kbNextPage?.Dispose();
         kbNavigate?.Dispose();
         kbDecide?.Dispose();
     }
@@ -114,6 +125,11 @@ public class AttackCustum : MonoBehaviour
 
     void Start()
     {
+        pageIndex = 0;
+
+        normalAttackPage.SetActive(true);
+        specialAttackPage.SetActive(false);
+
         RefreshColors();
         SelectCurrentButton();
     }
@@ -123,6 +139,12 @@ public class AttackCustum : MonoBehaviour
         //if (Gamepad.current != null) return;   
         if (Pressed(prevAttackAction,kbPrev)) ChangeAttack(-1);
         if (Pressed(nextAttackAction,kbNext)) ChangeAttack(1);
+
+        if (Pressed(prevPageAction, kbPrevPage))
+            ChangePage(-1);
+
+        if (Pressed(nextPageAction, kbNextPage))
+            ChangePage(1);
 
         // D-pad（Vector2）を「押した瞬間」だけ処理する
         Vector2 v = Vector2.zero;
@@ -139,6 +161,9 @@ public class AttackCustum : MonoBehaviour
 
         if (Pressed(decideAction,kbDecide)) Decide();
     }
+
+
+
 
     static bool Pressed(InputActionReference r,InputAction kb)
     {
@@ -215,13 +240,27 @@ public class AttackCustum : MonoBehaviour
             }
         }
     }
+
     void ChangePage(int dir)
     {
-        pageIndex = (pageIndex + dir + 2) % 2;
+        int oldPage = pageIndex;
 
-        Debug.Log(pageIndex == 0 ? "通常技" : "必殺技");
+        pageIndex += dir;
 
+        if (pageIndex < 0)
+            pageIndex = 1;
 
+        if (pageIndex > 1)
+            pageIndex = 0;
+
+        // 実際にページが変わった場合だけ処理
+        if (oldPage == pageIndex)
+            return;
+
+        normalAttackPage.SetActive(pageIndex == 0);
+        specialAttackPage.SetActive(pageIndex == 1);
+
+        Debug.Log("現在のページ：" + pageIndex);
     }
 
     // ---------- 値の取得・反映 ----------
