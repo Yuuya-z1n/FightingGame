@@ -61,20 +61,28 @@ public class AttackCustum : MonoBehaviour
 
     public int attackIndex = 0;  // 0=小 1=中 2=大
     public int rowIndex = 0;     // 0=ダメージ 1=発生 2=硬直
+                                 //public int buttonIndex = 1;  // 0=左 1=中央 2=右
 
     // 各攻撃×各項目で選ばれているボタン番号
-    readonly int[,] valueIndex = new int[3, 3];
+    readonly int[,] valueIndex = new int[3, 3]
+    {
+    { 1, 1, 1 }, // 小攻撃：ダメージ・発生・硬直
+    { 1, 1, 1 }, // 中攻撃：ダメージ・発生・硬直
+    { 1, 1, 1 }  // 大攻撃：ダメージ・発生・硬直
+    };
 
     int lastX, lastY; // D-padのエッジ検出用
+
+    [SerializeField] GameObject[] hideObjects;
 
     void Awake()
     {
         if (!enableKeyboard) return;
-
+        
         kbPrev = new InputAction("KbPrevAttack", InputActionType.Button, "<Keyboard>/q");
         kbNext = new InputAction("KbNextAttack", InputActionType.Button, "<Keyboard>/e");
-        kbPrevPage = new InputAction("KbPrevPage", InputActionType.Button, "<Keyboard>/q");
-        kbNextPage = new InputAction("KbNextPage", InputActionType.Button, "<Keyboard>/e");
+        kbPrevPage = new InputAction("KbPrevPage", InputActionType.Button, "<Keyboard>/z");
+        kbNextPage = new InputAction("KbNextPage", InputActionType.Button, "<Keyboard>/c");
         kbDecide = new InputAction("KbDecide", InputActionType.Button, "<Keyboard>/space");
 
         kbNavigate = new InputAction("KbNavigate", InputActionType.Value);
@@ -126,6 +134,12 @@ public class AttackCustum : MonoBehaviour
     void Start()
     {
         pageIndex = 0;
+
+        // 最初は小攻撃を選択
+        attackIndex = 0;
+
+        // 最初はダメージ項目を選択
+        rowIndex = 0;
 
         normalAttackPage.SetActive(true);
         specialAttackPage.SetActive(false);
@@ -274,18 +288,6 @@ public class AttackCustum : MonoBehaviour
         return i;
     }
 
-    ///// <summary>現在の選択内容を AttackPreset に書き込む</summary>
-    //public void ApplyTo(AttackPreset preset)
-    //{
-    //    for (int a = 0; a < 3; a++)
-    //    {
-    //        var data = preset.Get((AttackType)a);
-    //        data.Set(AttackParam.Damage, GetValue(a, 0));
-    //        data.Set(AttackParam.Startup, GetValue(a, 1));
-    //        data.Set(AttackParam.Recovery, GetValue(a, 2));
-    //    }
-    //}
-
     void Decide()
     {
         Debug.Log(
@@ -294,9 +296,15 @@ public class AttackCustum : MonoBehaviour
             $"値：{GetValue(attackIndex, rowIndex)}"
         );
 
-        //if (saveAttackCustum != null)
-        //{
-        //    saveAttackCustum.SaveData();
-        //}
     }
+
+    void HideUI()
+    {
+        foreach (GameObject obj in hideObjects)
+        {
+            if (obj != null)
+                obj.SetActive(false);
+        }
+    }
+
 }
