@@ -199,6 +199,15 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Decidebutton"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a85f1b0-3fd5-4bf4-b7a0-167881116d3d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -443,6 +452,17 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""action"": ""PrevPage"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2ea8f31-5f48-4b9d-9e3a-a15729cab780"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Decidebutton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -463,6 +483,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_NextPage = m_Player.FindAction("NextPage", throwIfNotFound: true);
         m_Player_PrevPage = m_Player.FindAction("PrevPage", throwIfNotFound: true);
+        m_Player_Decidebutton = m_Player.FindAction("Decidebutton", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -555,6 +576,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_NextPage;
     private readonly InputAction m_Player_PrevPage;
+    private readonly InputAction m_Player_Decidebutton;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -614,6 +636,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/PrevPage".
         /// </summary>
         public InputAction @PrevPage => m_Wrapper.m_Player_PrevPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Decidebutton".
+        /// </summary>
+        public InputAction @Decidebutton => m_Wrapper.m_Player_Decidebutton;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -676,6 +702,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @PrevPage.started += instance.OnPrevPage;
             @PrevPage.performed += instance.OnPrevPage;
             @PrevPage.canceled += instance.OnPrevPage;
+            @Decidebutton.started += instance.OnDecidebutton;
+            @Decidebutton.performed += instance.OnDecidebutton;
+            @Decidebutton.canceled += instance.OnDecidebutton;
         }
 
         /// <summary>
@@ -723,6 +752,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @PrevPage.started -= instance.OnPrevPage;
             @PrevPage.performed -= instance.OnPrevPage;
             @PrevPage.canceled -= instance.OnPrevPage;
+            @Decidebutton.started -= instance.OnDecidebutton;
+            @Decidebutton.performed -= instance.OnDecidebutton;
+            @Decidebutton.canceled -= instance.OnDecidebutton;
         }
 
         /// <summary>
@@ -847,5 +879,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPrevPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Decidebutton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDecidebutton(InputAction.CallbackContext context);
     }
 }

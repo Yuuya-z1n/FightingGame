@@ -2,6 +2,7 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.InputSystem;
 
 public class SaveAttackCustum : MonoBehaviour
 {
@@ -14,6 +15,23 @@ public class SaveAttackCustum : MonoBehaviour
     [SerializeField] GameObject normalAttackPage;
     [SerializeField] GameObject specialAttackPage;
 
+    [Header("Input Actions")]
+    [SerializeField] InputActionReference decidebuttonAction;
+
+
+    void OnEnable()
+    {
+        Enable(decidebuttonAction);
+    }
+    
+    static void Enable(InputActionReference action)
+    {
+        if(action != null)
+        {
+            action.action.Enable();
+        }
+    }
+        
     void Awake()
     {
         if (attackCustum == null && normalAttackPage != null)
@@ -91,6 +109,11 @@ public class SaveAttackCustum : MonoBehaviour
         );
 
         Debug.Log("CSVを保存しました: " + filePath);
+
+        if(MessageWindow.instance != null)
+        {
+            MessageWindow.instance.SetMessage("あなたの設定が保存されました",2f);
+        }
     }
 
     string GetDamageName(int index)
@@ -138,10 +161,10 @@ public class SaveAttackCustum : MonoBehaviour
 
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    sw.Close();
-        //}
+        if(decidebuttonAction != null && decidebuttonAction.action.WasPressedThisFrame())
+        {
+            SaveData();
+        }
     }
 }
 
