@@ -4,16 +4,33 @@ using UnityEngine;
 
 public class PlayerAttackHandler : MonoBehaviour
 {
-    private PlayerInputHandler inputHandler;
+    [Header("コンポーネント参照")]
+    [SerializeField] private PlayerInputHandler inputHandler;
+    [SerializeField] private PlayerMovement movement;
+
+    [Header("CSV設定")]
+    [SerializeField] private string csvResourceName = "test"; // あとで Attack_Data に変更
+
+    [Header("攻撃判定（HitBox）")]
+    [SerializeField] private HitBox attackHitBox; // 打撃全般用
+    [SerializeField] private HitBox throwHitBox;  // 投げ用
+
+    private Dictionary<string, AttackData> attackDataBase;
+    private bool isAttacking = false;
+    private Coroutine attackCoroutine;
 
     private void Awake()
     {
-        inputHandler = GetComponent<PlayerInputHandler>();
+        if (inputHandler == null) inputHandler = GetComponent<PlayerInputHandler>();
+        if (movement == null) movement = GetComponent<PlayerMovement>();
+
+        attackDataBase = AttackDataLoader.LoadAttackDataFromCSV(csvResourceName);
+
+        DisableAllHitBoxes();
     }
 
     private void OnEnable()
     {
-        // 入力クラスのイベントを監視する
         if (inputHandler != null)
         {
             inputHandler.OnAttackPressed += HandleAttack;
@@ -22,19 +39,101 @@ public class PlayerAttackHandler : MonoBehaviour
 
     private void OnDisable()
     {
-        // オブジェクトが無効化されたら解除する
         if (inputHandler != null)
         {
             inputHandler.OnAttackPressed -= HandleAttack;
         }
     }
 
-    // 実際の攻撃処理
     private void HandleAttack(AttackType strength)
     {
-        Vector2 dir = inputHandler.moveInput;
+        if (isAttacking || (movement != null && !movement.isCanMove)) return;
 
-        // ここでアシスト判定や方向キー判定、アニメーション呼び出しを行う
-        Debug.Log($"【{strength}攻撃】レバー方向: {dir}");
+        AttackData crntAttack = GetAttackData(strength);
+
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+        }
+
+        attackCoroutine = StartCoroutine(AttackSequence(crntAttack));
+
+        Vector2 dir = inputHandler.moveInput;
+        Debug.Log($"【{strength}攻撃】レバー方向: {dir} | 発生:{crntAttack.startup}F");
+    }
+
+    private IEnumerator AttackSequence(AttackData data)
+    {
+        isAttacking = true;
+        if (movement != null) movement.isCanMove = false;
+
+        // CSVの hitBoxName に応じて attackHitBox か throwHitBox を選択
+        HitBox targetHitBox = GetHitBoxByName(data.hitBoxName);
+        Collider targetCollider = (targetHitBox != null) ? targetHitBox.GetComponent<Collider>() : null;
+
+        // 発生
+        yield return new WaitForSeconds(ChangeFrameTime(data.startup));
+
+        // 持続
+        if (targetCollider != null)
+        {
+            targetCollider.enabled = true;
+        }
+
+        yield return new WaitForSeconds(ChangeFrameTime(data.active));
+
+        // HitBox無効化
+        if (targetCollider != null)
+        {
+            targetCollider.enabled = false;
+        }
+
+        // 硬直
+        yield return new WaitForSeconds(ChangeFrameTime(data.recovery));
+
+        if (movement != null) movement.isCanMove = true;
+        isAttacking = false;
+        attackCoroutine = null;
+    }
+
+    // CSVからデータを取り出す
+    private AttackData GetAttackData(AttackType type)
+    {
+        string key = type.ToString();
+
+        if (attackDataBase != null && attackDataBase.TryGetValue(key, out AttackData data))
+        {
+            return data;
+        }
+
+        Debug.LogWarning($"CSV内部に {key} のデータが見つかりません。");
+        return new AttackData { startup = 4, active = 2, recovery = 6, damage = 10, hitBoxName = "Attack_HitBox" };
+    }
+
+    // CSVの hitBoxName に基づいてコンポーネントを返す
+    private HitBox GetHitBoxByName(string name)
+    {
+        if (throwHitBox != null && throwHitBox.gameObject.name == name) return throwHitBox;
+        return attackHitBox; // デフォルトはすべて打撃用 HitBox
+    }
+
+    private void SetHitBoxEnabled(HitBox hitBox, bool state)
+    {
+        if (hitBox != null)
+        {
+            Collider col = hitBox.GetComponent<Collider>();
+            if (col != null) col.enabled = state;
+        }
+    }
+
+    private void DisableAllHitBoxes()
+    {
+        SetHitBoxEnabled(attackHitBox, false);
+        SetHitBoxEnabled(throwHitBox, false);
+    }
+
+    private float ChangeFrameTime(int frame)
+    {
+        return (float)frame / 60f;
     }
 }
