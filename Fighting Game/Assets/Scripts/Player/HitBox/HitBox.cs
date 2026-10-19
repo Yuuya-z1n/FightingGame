@@ -1,14 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static MyFunctions.GlobalFunctions;
 
 public class HitBox : MonoBehaviour
 {
-    [Header("攻撃パラメータ")]
-    [SerializeField] private int damage = 10;
-    [SerializeField] private Vector2 knockback = new Vector2(2f, 1f);
+    private int crntDamage = 10;
+    private Vector2 crntKnockback = new Vector2(2f, 1f);
+    private int crntHitStop = 3;
 
-    [Header("自身のHurtBox")]
+    [Header("所有者情報")]
+    [SerializeField] private GameObject owner;
+
+    [Header("自身のHurtBox(自傷防止)")]
     [SerializeField] private HurtBox myHurtBox;
 
     private Collider col;
@@ -19,11 +23,25 @@ public class HitBox : MonoBehaviour
         if (other.TryGetComponent<HurtBox>(out var targetHurtBox))
         {
             // 自分自身の食らい判定でないか確認
-            if (targetHurtBox == myHurtBox) return;
+            if (targetHurtBox.Owner == this.owner) return;
 
             // 相手にダメージを与える
-            targetHurtBox.TakeDamage(damage, knockback);
+            targetHurtBox.TakeDamage(owner, crntDamage, crntKnockback, ChangeFrameTime(crntHitStop));
         }
+    }
+
+    private void Awake()
+    {
+        col = GetComponent<Collider>();
+
+        if (owner == null) owner = transform.root.gameObject;
+    }
+
+    public void SetAttackData(int damage, Vector2 knockback, int hitStopDuration = 3)
+    {
+        crntDamage = damage;
+        crntKnockback = knockback;
+        crntHitStop = hitStopDuration;
     }
 
     private void OnDrawGizmos()

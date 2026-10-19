@@ -1,3 +1,4 @@
+using static MyFunctions.GlobalFunctions;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class PlayerAttackHandler : MonoBehaviour
     [SerializeField] private PlayerMovement movement;
 
     [Header("CSV設定")]
-    [SerializeField] private string csvResourceName = "test"; // あとで Attack_Data に変更
+    [SerializeField] private string csvResourceName = "./Assets/CustumData/PlayerCustum/test"; // あとで Attack_Data に変更
 
     [Header("攻撃判定（HitBox）")]
     [SerializeField] private HitBox attackHitBox; // 打撃全般用
@@ -77,6 +78,9 @@ public class PlayerAttackHandler : MonoBehaviour
         // 持続
         if (targetCollider != null)
         {
+            Vector2 knockback = (data.attackID == "Heavy") ? new Vector2(5f, 3f) : new Vector2(2f, 0.5f);
+            targetHitBox.SetAttackData(data.damage, knockback, 3);
+
             targetCollider.enabled = true;
         }
 
@@ -132,8 +136,4 @@ public class PlayerAttackHandler : MonoBehaviour
         SetHitBoxEnabled(throwHitBox, false);
     }
 
-    private float ChangeFrameTime(int frame)
-    {
-        return (float)frame / 60f;
-    }
 }

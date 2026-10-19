@@ -1,3 +1,14 @@
+namespace MyFunctions
+{
+    public static class GlobalFunctions
+    {
+        public static float ChangeFrameTime(int frame)
+        {
+            return (float)frame / 60f;
+        }
+
+    }
+}
 public enum AttackType
 {
     Light,
@@ -16,3 +27,4 @@ public struct AttackData
     public int damage;            // ダメージ
     public string hitBoxName;
 }
+
