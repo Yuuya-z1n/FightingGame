@@ -14,12 +14,8 @@ using UnityEngine.UI;
 ///   A       : 決定（AttackPresetに反映して保存）
 /// 注意: 対象ボタンの Navigation は None にしてください（UIの自動ナビゲーションと二重に動くため）。
 /// </summary>
-public class AttackCustum : MonoBehaviour
-{
-    [SerializeField] GameObject normalAttackPage;
-    [SerializeField] GameObject specialAttackPage;
-
-    public int pageIndex = 0;
+public class AttackCustom : MonoBehaviour
+{ 
     [Serializable]
     public class ButtonRow
     {
@@ -37,31 +33,31 @@ public class AttackCustum : MonoBehaviour
 
         public ButtonRow GetRow(int i) => i == 0 ? damage : i == 1 ? startup : recovery;
     }
-
+    
     static readonly string[] RowNames = { "ダメージ", "発生", "硬直" };
 
     [Header("0=小 / 1=中 / 2=大")]
     [SerializeField] AttackBlock[] attacks = new AttackBlock[3];
+    [Header("通常技の持続フレーム数")]
+    [SerializeField] public int smallAttackDuration;
+    [SerializeField] public int mediumAttackDuration;
+    [SerializeField] public int largeAttackDuration;
 
     [Header("Input Actions")]
     [SerializeField] InputActionReference prevAttackAction; // LB (Button)
     [SerializeField] InputActionReference nextAttackAction; // RB (Button)
-    [SerializeField] InputActionReference prevPageAction; // LT (Button)
-    [SerializeField] InputActionReference nextPageAction; // RT (Button)
     [SerializeField] InputActionReference navigateAction;   // D-pad (Vector2)
     [SerializeField] InputActionReference decideAction;     // A  (Button)
 
     [Header("キーボード")]
     [SerializeField] bool enableKeyboard = true;
-    InputAction kbPrev, kbNext, kbNavigate, kbDecide, kbNextPage,kbPrevPage;
+    InputAction kbPrev, kbNext, kbNavigate, kbDecide;
 
     [Header("色")]
-    [SerializeField] Color selectedColor = Color.red;
     [SerializeField] Color normalColor = Color.white;
 
     public int attackIndex = 0;  // 0=小 1=中 2=大
     public int rowIndex = 0;     // 0=ダメージ 1=発生 2=硬直
-                                 //public int buttonIndex = 1;  // 0=左 1=中央 2=右
 
     // 各攻撃×各項目で選ばれているボタン番号
     readonly int[,] valueIndex = new int[3, 3]
@@ -74,17 +70,16 @@ public class AttackCustum : MonoBehaviour
     int lastX, lastY; // D-padのエッジ検出用
 
     [SerializeField] GameObject[] hideObjects;
+    
+    [SerializeField] private Color selectedColor = Color.red;
 
-    void Awake()
+void Awake()
     {
         if (!enableKeyboard) return;
         
         kbPrev = new InputAction("KbPrevAttack", InputActionType.Button, "<Keyboard>/q");
         kbNext = new InputAction("KbNextAttack", InputActionType.Button, "<Keyboard>/e");
-        kbPrevPage = new InputAction("KbPrevPage", InputActionType.Button, "<Keyboard>/z");
-        kbNextPage = new InputAction("KbNextPage", InputActionType.Button, "<Keyboard>/c");
         kbDecide = new InputAction("KbDecide", InputActionType.Button, "<Keyboard>/space");
-
         kbNavigate = new InputAction("KbNavigate", InputActionType.Value);
         kbNavigate.AddCompositeBinding("2DVector")
             .With("Up", "<Keyboard>/w")
@@ -97,8 +92,6 @@ public class AttackCustum : MonoBehaviour
     {
         Enable(prevAttackAction);
         Enable(nextAttackAction);
-        Enable(prevPageAction);
-        Enable(nextPageAction);
         Enable(navigateAction);
         Enable(decideAction);
 
@@ -113,8 +106,6 @@ public class AttackCustum : MonoBehaviour
     {
         kbPrev?.Disable();
         kbNext?.Disable();
-        kbPrevPage?.Disable();
-        kbNextPage?.Disable();
         kbNavigate?.Disable();
         kbDecide?.Disable();
     }
@@ -123,8 +114,6 @@ public class AttackCustum : MonoBehaviour
     {
         kbPrev?.Dispose();
         kbNext?.Dispose();
-        kbPrevPage?.Dispose();
-        kbNextPage?.Dispose();
         kbNavigate?.Dispose();
         kbDecide?.Dispose();
     }
@@ -133,16 +122,11 @@ public class AttackCustum : MonoBehaviour
 
     void Start()
     {
-        pageIndex = 0;
-
         // 最初は小攻撃を選択
         attackIndex = 0;
 
         // 最初はダメージ項目を選択
         rowIndex = 0;
-
-        normalAttackPage.SetActive(true);
-        specialAttackPage.SetActive(false);
 
         RefreshColors();
         SelectCurrentButton();
@@ -153,12 +137,6 @@ public class AttackCustum : MonoBehaviour
         //if (Gamepad.current != null) return;   
         if (Pressed(prevAttackAction,kbPrev)) ChangeAttack(-1);
         if (Pressed(nextAttackAction,kbNext)) ChangeAttack(1);
-
-        if (Pressed(prevPageAction, kbPrevPage))
-            ChangePage(-1);
-
-        if (Pressed(nextPageAction, kbNextPage))
-            ChangePage(1);
 
         // D-pad（Vector2）を「押した瞬間」だけ処理する
         Vector2 v = Vector2.zero;
@@ -176,13 +154,11 @@ public class AttackCustum : MonoBehaviour
         if (Pressed(decideAction,kbDecide)) Decide();
     }
 
-
-
-
     static bool Pressed(InputActionReference r,InputAction kb)
     {
         return (r != null && r.action.WasPressedThisFrame()) || (kb != null && kb.WasPressedThisFrame());
     }
+
     static bool IsTypeing()
     {
         var es = EventSystem.current;
@@ -237,55 +213,94 @@ public class AttackCustum : MonoBehaviour
     }
 
     /// <summary>選ばれている値のボタンだけ赤、他は通常色にする</summary>
+    // 選択状態の見た目を更新する
+
     void RefreshColors()
     {
+        if (attacks == null) return;
+
         for (int a = 0; a < attacks.Length; a++)
         {
             if (attacks[a] == null) continue;
+
             for (int r = 0; r < 3; r++)
             {
-                var row = attacks[a].GetRow(r);
+                ButtonRow row = attacks[a].GetRow(r);
+
                 if (row == null || row.buttons == null) continue;
+
                 for (int i = 0; i < row.buttons.Length; i++)
                 {
-                    if (row.buttons[i] == null) continue;
-                    row.buttons[i].image.color = (i == valueIndex[a, r]) ? selectedColor : normalColor;
+                    Button button = row.buttons[i];
+                    if (button == null) continue;
+
+                    Image image = button.GetComponent<Image>();
+                    if (image == null) continue;
+
+                    // 画像全体の色は変更しない
+                    image.color = Color.white;
+
+                    // 選択中のボタンだけ中央を赤くする
+                    Material material = image.material;
+
+                    if (material != null &&
+                        material.HasProperty("_Selected"))
+                    {
+                        material.SetFloat(
+                            "_Selected",
+                            a == attackIndex &&
+                            r == rowIndex &&
+                            i == valueIndex[a, r] ? 1f : 0f
+                        );
+                    }
                 }
             }
         }
     }
 
-    void ChangePage(int dir)
-    {
-        int oldPage = pageIndex;
-
-        pageIndex += dir;
-
-        if (pageIndex < 0)
-            pageIndex = 1;
-
-        if (pageIndex > 1)
-            pageIndex = 0;
-
-        // 実際にページが変わった場合だけ処理
-        if (oldPage == pageIndex)
-            return;
-
-        normalAttackPage.SetActive(pageIndex == 0);
-        specialAttackPage.SetActive(pageIndex == 1);
-
-        Debug.Log("現在のページ：" + pageIndex);
-    }
-
     // ---------- 値の取得・反映 ----------
+
 
     public int GetValue(int a, int r)
     {
-        var row = attacks[a]?.GetRow(r);
-        int i = valueIndex[a, r];
-        if (row != null && row.optionValues != null && i < row.optionValues.Length)
-            return row.optionValues[i];
-        return i;
+        // 攻撃番号の範囲チェック
+        if (a < 0 || a >= 3)
+            return 0;
+
+        // 持続フレーム数を返す
+        if (r == 3)
+        {
+            switch (a)
+            {
+                case 0:
+                    return smallAttackDuration;
+
+                case 1:
+                    return mediumAttackDuration;
+
+                case 2:
+                    return largeAttackDuration;
+            }
+        }
+
+        // 既存のダメージ・発生・硬直
+        if (attacks == null || a >= attacks.Length ||
+            attacks[a] == null || r < 0 || r > 2)
+        {
+            return 0;
+        }
+
+        var row = attacks[a].GetRow(r);
+
+        if (row != null &&
+            row.optionValues != null &&
+            valueIndex[a, r] >= 0 &&
+            valueIndex[a, r] < row.optionValues.Length)
+        {
+            return row.optionValues[valueIndex[a, r]];
+        }
+
+        return valueIndex[a, r];
     }
 
     void Decide()

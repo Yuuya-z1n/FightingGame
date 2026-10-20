@@ -4,13 +4,13 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.InputSystem;
 
-public class SaveAttackCustum : MonoBehaviour
+public class SaveAttackCustom : MonoBehaviour
 {
 
     StreamWriter sw;
     string filename =  "test.csv" ;
-    [SerializeField] public AttackCustum attackCustum;
-    [SerializeField] public SpecialCustum specialMove;
+    [SerializeField] public AttackCustom attackCustom;
+    [SerializeField] public SpecialCustom specialMove;
 
     [SerializeField] GameObject normalAttackPage;
     [SerializeField] GameObject specialAttackPage;
@@ -34,11 +34,11 @@ public class SaveAttackCustum : MonoBehaviour
         
     void Awake()
     {
-        if (attackCustum == null && normalAttackPage != null)
-            attackCustum = normalAttackPage.GetComponentInChildren<AttackCustum>(true);
+        if (attackCustom == null && normalAttackPage != null)
+            attackCustom = normalAttackPage.GetComponentInChildren<AttackCustom>(true);
 
         if (specialMove == null && specialAttackPage != null)
-            specialMove = specialAttackPage.GetComponentInChildren<SpecialCustum>(true);
+            specialMove = specialAttackPage.GetComponentInChildren<SpecialCustom>(true);
     }
 
     void Start()
@@ -48,19 +48,17 @@ public class SaveAttackCustum : MonoBehaviour
         string[] header = { "F", "J", "time" };
         sw.WriteLine(string.Join(",", header));
 
-        if (attackCustum == null)
-            Debug.LogError("AttackCustumが見つかりません。", this);
+        if (attackCustom == null)
+            Debug.LogError("AttackCustomが見つかりません。", this);
 
         if (specialMove == null)
-            Debug.LogError("SpecialAttackCustumが見つかりません。", this);
+            Debug.LogError("SpecialAttackCustomが見つかりません。", this);
 
     }
 
-
-
     public void SaveData()
     {
-        if (attackCustum == null || specialMove == null)
+        if (attackCustom == null || specialMove == null)
         {
             Debug.LogError("通常技または必殺技の設定が取得できません。");
             return;
@@ -68,8 +66,8 @@ public class SaveAttackCustum : MonoBehaviour
 
         string folderpath = Path.Combine(
             Application.dataPath,
-            "CustumData",
-            "PlayerCustum"
+            "CustomData",
+            "PlayerCustom"
         );
 
         if (!Directory.Exists(folderpath))
@@ -80,26 +78,34 @@ public class SaveAttackCustum : MonoBehaviour
         string filePath = Path.Combine(folderpath, filename);
         StringBuilder csv = new StringBuilder();
 
-        csv.AppendLine("攻撃,ダメージ,発生,硬直");
-
+        csv.AppendLine("攻撃,発生,持続,硬直,ダメージ,ヒットボックスの名前");
         // 通常技：小・中・大
-        string[] normalNames = { "小攻撃", "中攻撃", "大攻撃" };
+        string[] normalNames = { "Light", "Medium", "Heavey"};
 
         for (int i = 0; i < 3; i++)
         {
             csv.AppendLine(
                 normalNames[i] + "," +
-                attackCustum.GetValue(i, 0) + "," +
-                attackCustum.GetValue(i, 1) + "," +
-                attackCustum.GetValue(i, 2)
+                attackCustom.GetValue(i, 1) + "," +
+                attackCustom.GetValue(i, 3) + "," +
+                attackCustom.GetValue(i, 2) + "," +
+                attackCustom.GetValue(i, 0) + "," +
+                "Attack_HitBox"
             );
         }
 
+        // 投げ技の項目
+        csv.AppendLine("Throw," +
+            "5,"+ "2,"+"23,"+"1200,"+ "Throw_HitBox");
+
+        // 必殺技の項目
         csv.AppendLine(
-            "必殺技1," +
-            specialMove.GetValue(0, 0) + "," +
+            "SpecialMove1," +
             specialMove.GetValue(0, 1) + "," +
-            specialMove.GetValue(0, 2)
+            specialMove.GetValue(0, 3) + "," +
+            specialMove.GetValue(0, 2) + "," +
+            specialMove.GetValue(0, 0) + "," +
+            "SpecialMove1_HitBox"
         );
 
         File.WriteAllText(
@@ -110,10 +116,11 @@ public class SaveAttackCustum : MonoBehaviour
 
         Debug.Log("CSVを保存しました: " + filePath);
 
-        if(MessageWindow.instance != null)
+        if (MessageWindow.instance != null)
         {
-            MessageWindow.instance.SetMessage("あなたの設定が保存されました",2f);
+            MessageWindow.instance.ShowSaveMessage();
         }
+
     }
 
     string GetDamageName(int index)

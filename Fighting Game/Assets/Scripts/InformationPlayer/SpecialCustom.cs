@@ -1,4 +1,3 @@
-
 using System;
 using TMPro;
 using UnityEngine;
@@ -6,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class SpecialCustum : MonoBehaviour
+public class SpecialCustom : MonoBehaviour
 {
     [Serializable]
     public class ButtonRow
@@ -24,11 +23,16 @@ public class SpecialCustum : MonoBehaviour
         public ButtonRow startup;
         public ButtonRow recovery;
 
+        [Header("持続フレーム数")]
+        public int specialAttacsDuration = 8;
+
         public ButtonRow GetRow(int index)
         {
             if (index == 0) return damage;
             if (index == 1) return startup;
-            return recovery;
+            if (index == 2) return recovery;
+
+            return null;
         }
     }
 
@@ -38,16 +42,18 @@ public class SpecialCustum : MonoBehaviour
         new SpecialAttackBlock[3];
 
     [Header("Input Actions")]
-    [SerializeField] InputActionReference prevAttackAction; // LB (Button)
-    [SerializeField] InputActionReference nextAttackAction; // RB (Button)
-    [SerializeField] InputActionReference prevPageAction; // LT (Button)
-    [SerializeField] InputActionReference nextPageAction; // RT (Button)
-    [SerializeField] InputActionReference navigateAction;   // D-pad (Vector2)
-    [SerializeField] InputActionReference decideAction;     // A  (Button)
+    [SerializeField] InputActionReference prevAttackAction;
+    [SerializeField] InputActionReference nextAttackAction;
+    [SerializeField] InputActionReference navigateAction;
+    [SerializeField] InputActionReference decideAction;
 
     [Header("キーボード")]
     [SerializeField] bool enableKeyboard = true;
-    InputAction kbPrev, kbNext, kbNavigate, kbDecide, kbNextPage, kbPrevPage;
+
+    InputAction kbPrev;
+    InputAction kbNext;
+    InputAction kbNavigate;
+    InputAction kbDecide;
 
     [Header("色")]
     [SerializeField] Color selectedColor = Color.red;
@@ -56,7 +62,7 @@ public class SpecialCustum : MonoBehaviour
     public int attackIndex = 0;
     public int rowIndex = 0;
 
-    // 各必殺技の各項目について、中央のボタンを初期選択
+    // 各必殺技の各項目の初期選択位置
     readonly int[,] valueIndex = new int[3, 3]
     {
         { 1, 1, 1 },
@@ -71,13 +77,25 @@ public class SpecialCustum : MonoBehaviour
     {
         if (!enableKeyboard) return;
 
-        kbPrev = new InputAction("KbPrevAttack", InputActionType.Button, "<Keyboard>/q");
-        kbNext = new InputAction("KbNextAttack", InputActionType.Button, "<Keyboard>/e");
-        kbPrevPage = new InputAction("KbPrevPage", InputActionType.Button, "<Keyboard>/q");
-        kbNextPage = new InputAction("KbNextPage", InputActionType.Button, "<Keyboard>/e");
-        kbDecide = new InputAction("KbDecide", InputActionType.Button, "<Keyboard>/space");
+        kbPrev = new InputAction(
+            "KbPrevAttack",
+            InputActionType.Button,
+            "<Keyboard>/q");
 
-        kbNavigate = new InputAction("KbNavigate", InputActionType.Value);
+        kbNext = new InputAction(
+            "KbNextAttack",
+            InputActionType.Button,
+            "<Keyboard>/e");
+
+        kbDecide = new InputAction(
+            "KbDecide",
+            InputActionType.Button,
+            "<Keyboard>/space");
+
+        kbNavigate = new InputAction(
+            "KbNavigate",
+            InputActionType.Value);
+
         kbNavigate.AddCompositeBinding("2DVector")
             .With("Up", "<Keyboard>/w")
             .With("Down", "<Keyboard>/s")
@@ -89,8 +107,6 @@ public class SpecialCustum : MonoBehaviour
     {
         Enable(prevAttackAction);
         Enable(nextAttackAction);
-        Enable(prevPageAction);
-        Enable(nextPageAction);
         Enable(navigateAction);
         Enable(decideAction);
 
@@ -98,37 +114,39 @@ public class SpecialCustum : MonoBehaviour
         kbNext?.Enable();
         kbNavigate?.Enable();
         kbDecide?.Enable();
-
     }
 
     void OnDisable()
     {
+        Disable(prevAttackAction);
+        Disable(nextAttackAction);
+        Disable(navigateAction);
+        Disable(decideAction);
+
         kbPrev?.Disable();
         kbNext?.Disable();
-        kbPrevPage?.Disable();
-        kbNextPage?.Disable();
         kbNavigate?.Disable();
         kbDecide?.Disable();
     }
 
-    void OnDestory()
+    void OnDestroy()
     {
         kbPrev?.Dispose();
         kbNext?.Dispose();
-        kbPrevPage?.Dispose();
-        kbNextPage?.Dispose();
         kbNavigate?.Dispose();
         kbDecide?.Dispose();
     }
 
     static void Enable(InputActionReference action)
     {
-        if (action != null) action.action.Enable();
+        if (action != null)
+            action.action.Enable();
     }
 
     static void Disable(InputActionReference action)
     {
-        if (action != null) action.action.Disable();
+        if (action != null)
+            action.action.Disable();
     }
 
     void Start()
@@ -142,14 +160,20 @@ public class SpecialCustum : MonoBehaviour
 
     void Update()
     {
-        if (Pressed(prevAttackAction))
+        if (Pressed(prevAttackAction, kbPrev))
             ChangeAttack(-1);
-        else if (Pressed(nextAttackAction))
+        else if (Pressed(nextAttackAction, kbNext))
             ChangeAttack(1);
 
-        Vector2 input = navigateAction != null
-            ? navigateAction.action.ReadValue<Vector2>()
-            : Vector2.zero;
+        Vector2 input = Vector2.zero;
+
+        if (navigateAction != null)
+            input += navigateAction.action.ReadValue<Vector2>();
+
+        if (kbNavigate != null)
+            input += kbNavigate.ReadValue<Vector2>();
+
+        input = Vector2.ClampMagnitude(input, 1f);
 
         int x = Step(input.x);
         int y = Step(input.y);
@@ -163,14 +187,19 @@ public class SpecialCustum : MonoBehaviour
         lastX = x;
         lastY = y;
 
-        if (Pressed(decideAction))
+        if (Pressed(decideAction, kbDecide))
             Decide();
     }
 
-    static bool Pressed(InputActionReference action)
+    static bool Pressed(
+        InputActionReference action,
+        InputAction keyboardAction)
     {
-        return action != null &&
-               action.action.WasPressedThisFrame();
+        return
+            (action != null &&
+             action.action.WasPressedThisFrame()) ||
+            (keyboardAction != null &&
+             keyboardAction.WasPressedThisFrame());
     }
 
     static int Step(float value)
@@ -181,6 +210,10 @@ public class SpecialCustum : MonoBehaviour
 
     void ChangeAttack(int direction)
     {
+        if (specialAttacks == null ||
+            specialAttacks.Length == 0)
+            return;
+
         attackIndex =
             (attackIndex + direction + specialAttacks.Length)
             % specialAttacks.Length;
@@ -201,7 +234,8 @@ public class SpecialCustum : MonoBehaviour
     {
         ButtonRow row = CurrentRow;
 
-        if (row == null || row.buttons == null ||
+        if (row == null ||
+            row.buttons == null ||
             row.buttons.Length == 0)
             return;
 
@@ -220,6 +254,7 @@ public class SpecialCustum : MonoBehaviour
         get
         {
             if (specialAttacks == null ||
+                attackIndex < 0 ||
                 attackIndex >= specialAttacks.Length ||
                 specialAttacks[attackIndex] == null)
                 return null;
@@ -232,13 +267,15 @@ public class SpecialCustum : MonoBehaviour
     {
         ButtonRow row = CurrentRow;
 
-        if (row == null || row.buttons == null ||
+        if (row == null ||
+            row.buttons == null ||
             row.buttons.Length == 0)
             return;
 
         int index = Mathf.Clamp(
             valueIndex[attackIndex, rowIndex],
-            0, row.buttons.Length - 1);
+            0,
+            row.buttons.Length - 1);
 
         if (row.buttons[index] != null)
             row.buttons[index].Select();
@@ -246,17 +283,20 @@ public class SpecialCustum : MonoBehaviour
 
     void RefreshColors()
     {
-        if (specialAttacks == null) return;
+        if (specialAttacks == null)
+            return;
 
         for (int a = 0; a < specialAttacks.Length; a++)
         {
-            if (specialAttacks[a] == null) continue;
+            if (specialAttacks[a] == null)
+                continue;
 
             for (int r = 0; r < 3; r++)
             {
                 ButtonRow row = specialAttacks[a].GetRow(r);
 
-                if (row == null || row.buttons == null) continue;
+                if (row == null || row.buttons == null)
+                    continue;
 
                 for (int i = 0; i < row.buttons.Length; i++)
                 {
@@ -274,13 +314,41 @@ public class SpecialCustum : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// row:
+    /// 0 = ダメージ
+    /// 1 = 発生
+    /// 2 = 硬直
+    /// 3 = 持続
+    /// </summary>
     public int GetValue(int attack, int row)
     {
-        ButtonRow setting = specialAttacks[attack].GetRow(row);
+        if (specialAttacks == null ||
+            attack < 0 ||
+            attack >= specialAttacks.Length ||
+            specialAttacks[attack] == null)
+        {
+            return 0;
+        }
+
+        // 持続フレーム数
+        if (row == 3)
+        {
+            return specialAttacks[attack].specialAttacsDuration;
+        }
+
+        // ダメージ・発生・硬直
+        if (row < 0 || row > 2)
+            return 0;
+
+        ButtonRow setting =
+            specialAttacks[attack].GetRow(row);
+
         int index = valueIndex[attack, row];
 
         if (setting != null &&
             setting.optionValues != null &&
+            index >= 0 &&
             index < setting.optionValues.Length)
         {
             return setting.optionValues[index];
@@ -291,9 +359,16 @@ public class SpecialCustum : MonoBehaviour
 
     void Decide()
     {
+        string[] rowNames =
+        {
+            "ダメージ",
+            "発生",
+            "硬直"
+        };
+
         Debug.Log(
             $"必殺技：{specialAttacks[attackIndex].label} / " +
-            $"項目：{new[] { "ダメージ", "発生", "硬直" }[rowIndex]} / " +
+            $"項目：{rowNames[rowIndex]} / " +
             $"値：{GetValue(attackIndex, rowIndex)}"
         );
     }
