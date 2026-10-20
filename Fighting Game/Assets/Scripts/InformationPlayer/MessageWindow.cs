@@ -1,24 +1,28 @@
 
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class MessageWindow : MonoBehaviour
 {
     public static MessageWindow instance;
 
-    [Header("薄くしたいUIの親GameObject")]
+    [Header("薄くするUIの親")]
     [SerializeField] private GameObject targetUIObject;
 
-    [Header("画面全体を暗くするImage（任意）")]
+    [Header("暗転用Image（任意）")]
     [SerializeField] private Image dimPanelImage;
 
-    private CanvasGroup targetCanvasGroup;
-    private Coroutine coroutine;
+    [Header("メッセージを閉じた後の移動先")]
+    [SerializeField] private string nextSceneName = "TrainingScene";
 
-    private TextMeshProUGUI text;
+    [SerializeField] private GameObject nextButton;
+
+    private CanvasGroup targetCanvasGroup;
+    private TextMeshProUGUI messageText;
     private Image windowImage;
+    private bool waitingForClick;
 
     private void Awake()
     {
@@ -29,109 +33,43 @@ public class MessageWindow : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
     private void Start()
     {
-        // メッセージウィンドウの背景Imageを取得
         windowImage = GetComponent<Image>();
 
-        // 子オブジェクトからTextMeshProUGUIを取得
         Transform textTransform =
             transform.Find("MessageWindowText");
 
         if (textTransform != null)
         {
-            text = textTransform.GetComponent<TextMeshProUGUI>();
-        }
-        else if (transform.childCount > 0)
-        {
-            text = transform.GetChild(0)
-                .GetComponent<TextMeshProUGUI>();
+            messageText =
+                textTransform.GetComponent<TextMeshProUGUI>();
         }
 
-        if (windowImage == null)
-        {
-            Debug.LogError(
-                "MessageWindowImageにImageがありません。",
-                this
-            );
-        }
-
-        if (text == null)
-        {
-            Debug.LogError(
-                "MessageWindowTextが見つかりません。",
-                this
-            );
-        }
-
-        // 指定されたGameObjectからCanvasGroupを取得
         if (targetUIObject != null)
         {
             targetCanvasGroup =
                 targetUIObject.GetComponent<CanvasGroup>();
 
-            // CanvasGroupがなければ自動追加
             if (targetCanvasGroup == null)
             {
                 targetCanvasGroup =
                     targetUIObject.AddComponent<CanvasGroup>();
             }
         }
-        else
-        {
-            Debug.LogError(
-                "Target UI ObjectにGameObjectを設定してください。",
-                this
-            );
-        }
 
-        // メッセージを初期状態で非表示にする
-        SetAlpha(windowImage, 0f);
-        SetAlpha(text, 0f);       
-
-        // UIを元の状態にする
+        HideMessage();
         RestoreTargetUI();
     }
 
-    // 外部からメッセージを表示する
-    public void SetMessage(string str, float sec)
+    // 保存成功時に呼び出す
+    public void ShowSaveMessage()
     {
-        // 自分自身と親オブジェクトが有効か確認
-        if (!gameObject.activeInHierarchy)
-        {
-            Debug.LogError(
-                "MessageWindowImageまたは親オブジェクトが非アクティブです。",
-                this
-            );
-            return;
-        }
+        waitingForClick = true;
 
-        if (coroutine != null)
-        {
-            StopCoroutine(coroutine);
-            coroutine = null;
-        }
-
-        coroutine = StartCoroutine(
-            UpdateMessageWindow(str, sec)
-        );
-    }
-    // メッセージウィンドウを更新する
-    private IEnumerator UpdateMessageWindow(
-        string str,
-        float sec)
-    {
-        if (windowImage == null || text == null)
-        {
-            coroutine = null;
-            yield break;
-        }
-
-        // 対象のUIを薄くして操作を無効化
         if (targetCanvasGroup != null)
         {
             targetCanvasGroup.alpha = 0.35f;
@@ -139,40 +77,66 @@ public class MessageWindow : MonoBehaviour
             targetCanvasGroup.blocksRaycasts = false;
         }
 
-        // 暗転パネルを表示
         if (dimPanelImage != null)
         {
             dimPanelImage.gameObject.SetActive(true);
-            SetAlpha(dimPanelImage, 0.65f);
+
+            Color color = dimPanelImage.color;
+            color.a = 0.65f;
+            dimPanelImage.color = color;
         }
 
-        // メッセージを表示
-        text.text = str;
-
-        SetAlpha(windowImage, 1f);
-        SetAlpha(text, 1f);
-
-        // 指定秒数待機
-        yield return new WaitForSecondsRealtime(sec);
-
-        // メッセージを非表示
-        SetAlpha(windowImage, 0f);
-        SetAlpha(text, 0f);
-
-        // 暗転パネルを非表示
-        if (dimPanelImage != null)
+        if (messageText != null)
         {
-            SetAlpha(dimPanelImage, 0f);
-            dimPanelImage.gameObject.SetActive(false);
+            messageText.text =
+                "保存しました！\nクリックして次へ";
+            SetAlpha(messageText, 1f);
         }
 
-        // 対象UIを元に戻す
-        RestoreTargetUI();
-
-        coroutine = null;
+        if (windowImage != null)
+        {
+            SetAlpha(windowImage, 1f);
+        }
+        if (nextButton != null)
+        {
+            nextButton.SetActive(true);
+        }
     }
 
-    // 対象のUIを通常状態に戻す
+    // メッセージウィンドウのButtonから呼び出す
+    public void CloseMessageAndMove()
+    {
+        if (!waitingForClick)
+        {
+            return;
+        }
+
+        waitingForClick = false;
+
+        HideMessage();
+        RestoreTargetUI();
+
+        SceneManager.LoadScene(nextSceneName);
+    }
+
+    private void HideMessage()
+    {
+        SetAlpha(windowImage, 0f);
+        SetAlpha(messageText, 0f);
+
+        if (dimPanelImage != null)
+        {
+            Color color = dimPanelImage.color;
+            color.a = 0f;
+            dimPanelImage.color = color;
+            dimPanelImage.gameObject.SetActive(false);
+        }
+        if (nextButton != null)
+        {
+            nextButton.SetActive(false);
+        }
+    }
+
     private void RestoreTargetUI()
     {
         if (targetCanvasGroup != null)
@@ -183,7 +147,6 @@ public class MessageWindow : MonoBehaviour
         }
     }
 
-    // ImageやTextの透明度を変更する
     private void SetAlpha(Graphic graphic, float alpha)
     {
         if (graphic == null)
