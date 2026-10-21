@@ -115,7 +115,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Decidebutton",
+                    "name": "DecideButton",
                     "type": "Button",
                     "id": "8a85f1b0-3fd5-4bf4-b7a0-167881116d3d",
                     "expectedControlType": "",
@@ -374,7 +374,35 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Decidebutton",
+                    "action": "DecideButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Menu",
+            "id": "1adb7ae6-dac3-4947-b36c-c93e72204500",
+            "actions": [
+                {
+                    "name": "OpenCloseMenu",
+                    "type": "Button",
+                    "id": "b1642aad-7343-4057-a91b-8892304570df",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f459d251-ea51-44df-b4ae-078037f8ad34",
+                    "path": "<XInputController>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OpenCloseMenu",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
