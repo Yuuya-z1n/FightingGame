@@ -118,6 +118,61 @@
             "bindings": [
                 {
                     "name": "2D Vector",
+                    "id": "a953a2d5-30f6-43f0-b9b9-36b025308abf",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "f89ac1f7-62b3-48ca-9a23-11256e95cbbd",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "0590f759-e17d-4c96-bad5-3cbb9e7b1098",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "649d8cd6-bbe9-441d-9923-0b2713580372",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "d6e389cd-8938-47a7-9dd7-6f4cd902c91c",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "2D Vector",
                     "id": "a0209ea0-c7fd-4b88-aa27-4f201ad60b30",
                     "path": "2DVector",
                     "interactions": "",
@@ -217,6 +272,17 @@
                 },
                 {
                     "name": "",
+                    "id": "92ea6ad6-1ec0-43f3-85c2-79eb3fb6af43",
+                    "path": "<Keyboard>/z",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LightAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "e6e9bdda-5f7e-451b-a07e-99486ef3d0e3",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
@@ -230,6 +296,17 @@
                     "name": "",
                     "id": "3278d8fb-06cd-45ce-8c05-a419b870df2f",
                     "path": "<Keyboard>/k",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MiddleAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3b4ab480-e165-4444-ad49-a184028d4ee5",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -261,6 +338,17 @@
                 },
                 {
                     "name": "",
+                    "id": "72f1b046-1c6c-4bdc-8688-9116ba436c58",
+                    "path": "<Keyboard>/c",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "HeavyAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "faae7544-02bd-420f-920d-e958e87cc789",
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
@@ -274,6 +362,17 @@
                     "name": "",
                     "id": "6624c71b-39ef-4603-8fdf-3d09e4cf3b32",
                     "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Throw",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e9bd2e4e-c502-4881-a4bd-fb765b7765ae",
+                    "path": "<Keyboard>/v",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

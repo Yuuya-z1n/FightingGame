@@ -27,7 +27,7 @@ public class HurtBox : MonoBehaviour
     public void TakeDamage(GameObject attackOwner, int damage, Vector2 knockback, float hitStopDuration)
     {
         crntHealth -= damage;
-        Debug.Log($"{owner.name} が {damage} ダメージを受けた！");
+        Debug.Log($"{owner.name} が {damage} ダメージを受けた！残り : {crntHealth}");
     
         if(hitStopDuration > 0.0f && HitStopManager.Instance != null)
         {

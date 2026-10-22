@@ -1,157 +1,156 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.ShaderKeywordFilter;
-using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Processors;
+ï»¿using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("ˆÚ“®ŠÖ˜A‚Ìƒpƒ‰ƒ[ƒ^")]
+    [Header("ç§»å‹•é–¢é€£ã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿")]
     [SerializeField] public float moveSpeed = 5.0f;
-    [SerializeField] public float jumpForce = 12.0f;
+    [SerializeField] public float jumpForce = 9.0f;
     [SerializeField] public float jumpForwardSpeed = 5.0f;
     [SerializeField] public float jumpBackSpeed = 4.5f;
     [SerializeField] private float gravityScale = 25.0f;
 
-    [Header("Ú’n”»’è")]
+    [Header("åœ°ä¸Šã§ã®æ¸›é€Ÿï¼ˆå…¥åŠ›ãªã—ãƒ»æ”»æ’ƒä¸­ãƒ»è¢«æŠ¼ã—æ™‚ï¼‰")]
+    [Tooltip("å¤§ãã„ã»ã©æŠ¼ã•ã‚ŒãŸå¾Œã«ã™ãæ­¢ã¾ã‚‹ã€‚å°ã•ã„ã¨æ»‘ã‚‹")]
+    [SerializeField] private float groundDeceleration = 30.0f;
+
+    [Header("æ¥åœ°åˆ¤å®š")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundRadius = 0.2f;
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask groundLayer; // Player è‡ªèº«ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¯å«ã‚ãªã„ã“ã¨
 
     private PlayerInputHandler inputHandler;
     private PlayerFacingHandler facingHandler;
+    private Rigidbody rb;
 
-    private Vector3 velocity;
     private bool isGrounded;
     private bool wasGrounded;
-    private float jumpCurrentXVelocity = 0f; // ‹ó’†‚ÅˆÛ‚·‚é‰¡‘¬“x
-    
+    private float jumpCurrentXVelocity = 0f; // ç©ºä¸­ã§ç¶­æŒã™ã‚‹æ¨ªé€Ÿåº¦
+
+    public bool IsGrounded => isGrounded;
     public bool isCanMove = true;
+
+    private void Start()
+    {
+        foreach (var c in GetComponentsInChildren<Collider>())
+            Debug.Log($"{name}/{c.name}: {c.GetType().Name} enabled={c.enabled} trigger={c.isTrigger} layer={LayerMask.LayerToName(c.gameObject.layer)}");
+        Debug.Log($"{name} rb: kinematic={rb.isKinematic} detection={rb.collisionDetectionMode}");
+    }
 
     private void Awake()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
         facingHandler = GetComponent<PlayerFacingHandler>();
-        if (inputHandler == null)
+        rb = GetComponent<Rigidbody>();
+
+        if (inputHandler == null) Debug.LogError("PlayerInputHandler ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
+        if (facingHandler == null) Debug.LogError("PlayerFacingHandler ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
+
+        if (rb == null)
         {
-            Debug.LogError("PlayerInputHandler ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
+            Debug.LogError("RigidbodyãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“");
+            return;
         }
-        if (facingHandler == null)
-        {
-            Debug.LogError("PlayerFacingHandler ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñ");
-        }
+
+        rb.velocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // é‡åŠ›ã¯è‡ªå‰ã§é©ç”¨ã™ã‚‹
+        rb.useGravity = false;
+        rb.isKinematic = false;
+        rb.constraints = RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotation;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-
-    private void Update()
+    private void FixedUpdate()
     {
-        MoveUpdate();
-        GroundCheck();
-   }
+        if (rb == null || inputHandler == null) return;
 
-    // ˆÚ“®ˆ—
-    private void MoveUpdate()
-    {
-        if(!isCanMove) return;
+        UpdateGrounded();
 
-        Vector2 input = inputHandler.moveInput;
+        Vector2 input = isCanMove ? inputHandler.moveInput : Vector2.zero;
+        Vector3 vel = rb.velocity;
+        float dt = Time.fixedDeltaTime;
 
-        if(isGrounded)
+        if (isGrounded)
         {
-            if(input.y > 0.5f)
+            if (input.y > 0.5f)
             {
-                Jump(input.x);
-                return;
+                Jump(input.x, ref vel);
             }
-
-            // ‚µ‚á‚ª‚İó‘Ô‚È‚ç“®‚©‚È‚¢
-            if (input.y < -0.5f) return;
-
-
-            if (Mathf.Abs(input.x) > 0.2f)
+            else if (input.y >= -0.5f && Mathf.Abs(input.x) > 0.2f)
             {
-                //Debug.Log($"ˆÚ“®’†");
-                transform.Translate(Vector3.right * input.x * moveSpeed * Time.deltaTime, Space.World);
+                vel.x = input.x * moveSpeed;
+            }
+            else
+            {
+                vel.x = Mathf.MoveTowards(vel.x, 0f, groundDeceleration * dt);
             }
         }
         else
         {
-            transform.Translate(Vector3.right * jumpCurrentXVelocity * Time.deltaTime, Space.World);
-
-            // d—Í“K—p
-            velocity.y -= gravityScale * Time.deltaTime;
-            transform.Translate(Vector3.up * velocity.y * Time.deltaTime, Space.World);
+            // ç©ºä¸­: æ”»æ’ƒä¸­ã§ã‚‚æ¨ªé€Ÿåº¦ã¨é‡åŠ›ã¯ç¶­æŒã™ã‚‹
+            vel.x = jumpCurrentXVelocity;
         }
+
+        // é‡åŠ›
+        vel.y -= gravityScale * dt;
+        vel.z = 0f;
+
+        rb.velocity = vel;
     }
 
-    private void Jump(float inputX)
+    private void Jump(float inputX, ref Vector3 vel)
     {
-        // ã•ûŒü‰‘¬
-        velocity.y = jumpForce;
+        vel.y = jumpForce;
 
         isGrounded = false;
         wasGrounded = false;
 
-        if(Mathf.Abs(inputX) > 0.2f)
+        if (Mathf.Abs(inputX) > 0.2f)
         {
-            bool isMovingForward = (facingHandler.isFacingRight && inputX > 0) || (!facingHandler.isFacingRight && inputX < 0);
-            
-            if(isMovingForward)
-            {
-                // ‘O”ò‚Ñ
-                jumpCurrentXVelocity = Mathf.Sign(inputX) * jumpForwardSpeed;
-            }
-            else
-            {
-                // Œã‚ë”ò‚Ñ
-                jumpCurrentXVelocity = Mathf.Sign(inputX) * jumpBackSpeed;
-            }
-        
+            bool facingRight = facingHandler == null || facingHandler.isFacingRight;
+            bool isMovingForward = (facingRight && inputX > 0) || (!facingRight && inputX < 0);
+
+            // å‰é£›ã³ / å¾Œã‚é£›ã³
+            float speed = isMovingForward ? jumpForwardSpeed : jumpBackSpeed;
+            jumpCurrentXVelocity = Mathf.Sign(inputX) * speed;
         }
         else
         {
-            // ‚’¼
+            // å‚ç›´
             jumpCurrentXVelocity = 0.0f;
         }
 
-        // ƒWƒƒƒ“ƒv’†‚ÍU‚è•Ô‚è‚ğƒƒbƒN
-        facingHandler.canTurn = false;
+        vel.x = jumpCurrentXVelocity;
     }
 
-    private void GroundCheck()
+    private void UpdateGrounded()
     {
+        wasGrounded = isGrounded;
+
         if (groundCheck == null) return;
 
-        if(velocity.y > 0)
-        {
-            isGrounded = false;
-            return;
-        }
+        // ä¸Šæ˜‡ä¸­ã¯æ¥åœ°æ‰±ã„ã«ã—ãªã„
+        bool rising = rb.velocity.y > 0.1f;
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundLayer);
+        isGrounded = !rising && Physics.CheckSphere(
+            groundCheck.position, groundRadius, groundLayer,
+            QueryTriggerInteraction.Ignore);
 
         if (isGrounded && !wasGrounded)
         {
             OnLanding();
         }
-
-        // Ú’n‚µ‚Ä‚¢‚éê‡AY•ûŒü‚Ì—‰º‘¬“x‚ğˆê’è‚ÉƒŠƒZƒbƒg
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
-
-        // ŸƒtƒŒ[ƒ€‚Ì‚½‚ß‚ÉŒ»İ‚Ìî•ñ‚ğ•Û
-        wasGrounded = isGrounded;
     }
 
     private void OnLanding()
     {
         jumpCurrentXVelocity = 0.0f;
+        Debug.Log("ç€åœ°ã—ãŸ");
+    }
 
-        facingHandler.canTurn = true;
-
-        Debug.Log("’…’n‚µ‚½");
+    private void OnCollisionEnter(Collision c)
+    {
+        Debug.Log($"{name} ãŒè¡çª: {c.collider.name} (layer={LayerMask.LayerToName(c.gameObject.layer)})");
     }
 }

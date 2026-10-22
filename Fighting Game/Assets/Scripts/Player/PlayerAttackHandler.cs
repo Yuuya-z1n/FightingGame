@@ -10,7 +10,7 @@ public class PlayerAttackHandler : MonoBehaviour
     [SerializeField] private PlayerMovement movement;
 
     [Header("CSV設定")]
-    [SerializeField] private string csvResourceName = "./Assets/CustumData/PlayerCustum/test"; // あとで Attack_Data に変更
+    [SerializeField] private string csvResourceName = "test"; // あとで Attack_Data に変更
 
     [Header("攻撃判定（HitBox）")]
     [SerializeField] private HitBox attackHitBox; // 打撃全般用
@@ -19,11 +19,13 @@ public class PlayerAttackHandler : MonoBehaviour
     private Dictionary<string, AttackData> attackDataBase;
     private bool isAttacking = false;
     private Coroutine attackCoroutine;
+    private PlayerFacingHandler facingHandler;
 
     private void Awake()
     {
         if (inputHandler == null) inputHandler = GetComponent<PlayerInputHandler>();
         if (movement == null) movement = GetComponent<PlayerMovement>();
+        if (facingHandler == null) facingHandler = GetComponent<PlayerFacingHandler>();
 
         attackDataBase = AttackDataLoader.LoadAttackDataFromCSV(csvResourceName);
 
@@ -65,6 +67,7 @@ public class PlayerAttackHandler : MonoBehaviour
 
     private IEnumerator AttackSequence(AttackData data)
     {
+        facingHandler.canTurn = false;
         isAttacking = true;
         if (movement != null) movement.isCanMove = false;
 
@@ -98,6 +101,7 @@ public class PlayerAttackHandler : MonoBehaviour
         if (movement != null) movement.isCanMove = true;
         isAttacking = false;
         attackCoroutine = null;
+        facingHandler.canTurn = true;
     }
 
     // CSVからデータを取り出す
