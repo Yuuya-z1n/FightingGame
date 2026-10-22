@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -55,7 +54,14 @@ public class MenuManager : MonoBehaviour
         RefreshSelection();
     }
 
-
+    // メニューが開いていて、メニュー操作中か
+    public bool IsMenuOpen
+    {
+        get
+        {
+            return menuPanel != null && menuPanel.activeSelf;
+        }
+    }
     void Update()
     {
         // Menuボタンでメニューを開閉
@@ -99,7 +105,7 @@ public class MenuManager : MonoBehaviour
         // Aボタンで選択した項目を決定
         if (Pressed(decideAction))
         {
-            Debug.Log("決定ボタンが押されました");
+            Debug.Log("Aボタンの入力を検出しました");
             Decide();
         }
     }
@@ -113,13 +119,20 @@ public class MenuManager : MonoBehaviour
 
     void ToggleMenu()
     {
-        menuPanel.SetActive(!menuPanel.activeSelf);
-        openMenu = !openMenu;
-        if (menuPanel.activeSelf)
+        if (menuPanel == null) return;
+
+        bool isOpening = !menuPanel.activeSelf;
+        menuPanel.SetActive(isOpening);
+
+        openMenu = isOpening;
+
+        if (isOpening)
         {
             selectedIndex = 0;
             RefreshSelection();
         }
+
+        Debug.Log(isOpening ? "Menuを開きました" : "Menuを閉じました");
     }
 
     void MoveSelection(int direction)
@@ -154,16 +167,36 @@ public class MenuManager : MonoBehaviour
 
     void Decide()
     {
-        if (menuButtons == null ||
-            selectedIndex < 0 ||
-            selectedIndex >= menuButtons.Length)
+        Debug.Log("Decide() が呼び出されました");
+
+        if (menuButtons == null)
+        {
+            Debug.LogError("menuButtons が設定されていません");
             return;
+        }
+
+        if (selectedIndex < 0 || selectedIndex >= menuButtons.Length)
+        {
+            Debug.LogError("選択番号が範囲外です: " + selectedIndex);
+            return;
+        }
 
         Button button = menuButtons[selectedIndex];
 
-        if (button != null && button.interactable)
+        if (button == null)
         {
-            button.onClick.Invoke();
+            Debug.LogError("選択中のボタンが未設定です");
+            return;
         }
+
+        if (!button.interactable)
+        {
+            Debug.LogWarning("選択中のボタンが操作できません");
+            return;
+        }
+
+        Debug.Log("ボタン処理を実行します: " + button.name);
+        button.onClick.Invoke();
+        menuPanel.SetActive(false);
     }
 }
