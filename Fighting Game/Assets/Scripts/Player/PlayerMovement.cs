@@ -3,10 +3,10 @@
 public class PlayerMovement : MonoBehaviour
 {
     [Header("移動関連のパラメータ")]
-    [SerializeField] public float moveSpeed = 5.0f;
-    [SerializeField] public float jumpForce = 9.0f;
-    [SerializeField] public float jumpForwardSpeed = 5.0f;
-    [SerializeField] public float jumpBackSpeed = 4.5f;
+    [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] private float jumpForce = 9.0f;
+    [SerializeField] private float jumpForwardSpeed = 5.0f;
+    [SerializeField] private float jumpBackSpeed = 4.5f;
     [SerializeField] private float gravityScale = 25.0f;
 
     [Header("地上での減速（入力なし・攻撃中・被押し時）")]
@@ -29,13 +29,6 @@ public class PlayerMovement : MonoBehaviour
     public bool IsGrounded => isGrounded;
     public bool isCanMove = true;
 
-    private void Start()
-    {
-        foreach (var c in GetComponentsInChildren<Collider>())
-            Debug.Log($"{name}/{c.name}: {c.GetType().Name} enabled={c.enabled} trigger={c.isTrigger} layer={LayerMask.LayerToName(c.gameObject.layer)}");
-        Debug.Log($"{name} rb: kinematic={rb.isKinematic} detection={rb.collisionDetectionMode}");
-    }
-
     private void Awake()
     {
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -44,12 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (inputHandler == null) Debug.LogError("PlayerInputHandler が見つかりません");
         if (facingHandler == null) Debug.LogError("PlayerFacingHandler が見つかりません");
-
-        if (rb == null)
-        {
-            Debug.LogError("Rigidbodyが見つかりません");
-            return;
-        }
+        if (rb == null) { Debug.LogError("Rigidbodyが見つかりません"); return; }
 
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -147,10 +135,5 @@ public class PlayerMovement : MonoBehaviour
     {
         jumpCurrentXVelocity = 0.0f;
         Debug.Log("着地した");
-    }
-
-    private void OnCollisionEnter(Collision c)
-    {
-        Debug.Log($"{name} が衝突: {c.collider.name} (layer={LayerMask.LayerToName(c.gameObject.layer)})");
     }
 }

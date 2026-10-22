@@ -53,11 +53,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
-  jumpForce: 4
-  jumpForwardSpeed: 5
-  jumpBackSpeed: 4.5
-  gravityScale: 15
-  groundDeceleration: 30
+  jumpForce: 20
+  jumpForwardSpeed: 6
+  jumpBackSpeed: 5
+  gravityScale: 30
+  groundDeceleration: 70
   groundCheck: {fileID: 104020270014638485}
   groundRadius: 0.05
   groundLayer:
@@ -151,7 +151,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2

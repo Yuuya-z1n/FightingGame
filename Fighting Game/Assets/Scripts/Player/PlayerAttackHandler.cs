@@ -81,12 +81,9 @@ public class PlayerAttackHandler : MonoBehaviour
         // 持続
         if (targetCollider != null)
         {
-            Vector2 knockback = (data.attackID == "Heavy") ? new Vector2(5f, 3f) : new Vector2(2f, 0.5f);
-            targetHitBox.SetAttackData(data.damage, knockback, 3);
-
+            targetHitBox.ApplyAttackData(data);
             targetCollider.enabled = true;
         }
-
         yield return new WaitForSeconds(ChangeFrameTime(data.active));
 
         // HitBox無効化

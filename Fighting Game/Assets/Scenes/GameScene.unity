@@ -132,6 +132,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8614981465978816602, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
   m_PrefabInstance: {fileID: 6910310496171380611}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &539078328 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8894740724206848205, guid: e10483af33c551c4d9e5d1fae85be7ab, type: 3}
+  m_PrefabInstance: {fileID: 4725834456859462964}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &728138067
 GameObject:
   m_ObjectHideFlags: 0
@@ -220,18 +225,10 @@ PrefabInstance:
       propertyPath: opponentTrans
       value: 
       objectReference: {fileID: 528280999}
-    - target: {fileID: 3953556240994710293, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
-      propertyPath: m_IsTrigger
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4844785703043970679, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
       propertyPath: m_Name
       value: BlueGuyParent 1P
       objectReference: {fileID: 0}
-    - target: {fileID: 7508820795659109317, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
-      propertyPath: groundCheck
-      value: 
-      objectReference: {fileID: 1325724942}
     - target: {fileID: 7791606305826419297, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
       propertyPath: playerIndex
       value: 0
@@ -290,15 +287,10 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
---- !u!4 &1325724942 stripped
+--- !u!4 &1337089207 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 104020270014638485, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
-  m_PrefabInstance: {fileID: 986016773}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1370332978 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 104020270014638485, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
-  m_PrefabInstance: {fileID: 6910310496171380611}
+  m_CorrespondingSourceObject: {fileID: 7784489279624848785, guid: e10483af33c551c4d9e5d1fae85be7ab, type: 3}
+  m_PrefabInstance: {fileID: 4725834456859462964}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1451549707
 GameObject:
@@ -405,6 +397,7 @@ GameObject:
   - component: {fileID: 1544109898}
   - component: {fileID: 1544109897}
   - component: {fileID: 1544109896}
+  - component: {fileID: 1544109899}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -481,6 +474,81 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.58402014, y: 3.988967, z: -7.4756155}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1544109899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1544109895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da9becc9b72e3ea4f87e60f3a481955e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player1: {fileID: 447982850}
+  player2: {fileID: 528280999}
+  screenMargin: 2.5
+  zoomSmoothTime: 0.15
+  minDistance: 7
+  maxDistance: 10
+  jumpFollowRate: 0.4
+  maxJumpOffset: 1.5
+  verticalSmoothTime: 0.15
+  horizontalSmoothTime: 0.1
+  useStageBounds: 1
+  minusWall: {fileID: 1337089207}
+  plusWall: {fileID: 539078328}
+--- !u!1 &1967615466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967615468}
+  - component: {fileID: 1967615467}
+  m_Layer: 0
+  m_Name: CameraEdgeWall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1967615467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967615466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0c57df50788a44492fc5fe0cc8a9e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fightingCamera: {fileID: 1544109899}
+  wallLayerName: Default
+  wallThickness: 2
+  wallHeight: 40
+  wallDepth: 10
+  wallCenterZ: 0
+--- !u!4 &1967615468
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967615466}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.6879096, y: 6.6417356, z: 4.4301524}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -567,10 +635,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BlueGuyParent 2P
       objectReference: {fileID: 0}
-    - target: {fileID: 7508820795659109317, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
-      propertyPath: groundCheck
-      value: 
-      objectReference: {fileID: 1370332978}
     - target: {fileID: 7791606305826419297, guid: 1a97596658d55ef45b1ca2953c43dbb3, type: 3}
       propertyPath: playerIndex
       value: 1
@@ -631,3 +695,4 @@ SceneRoots:
   - {fileID: 6910310496171380611}
   - {fileID: 4725834456859462964}
   - {fileID: 728138069}
+  - {fileID: 1967615468}
