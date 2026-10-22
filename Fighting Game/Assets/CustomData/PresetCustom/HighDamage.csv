@@ -1,0 +1,6 @@
+﻿攻撃,発生,持続,硬直,ダメージ,ヒットボックスの名前
+Light,5,2,9,400,Attack_HitBox
+Medium,10,3,15,750,Attack_HitBox
+Heavey,14,4,19,950,Attack_HitBox
+Throw,5,2,23,1200,Throw_HitBox
+SpecialMove1,7,8,30,1600,SpecialMove1_HitBox
