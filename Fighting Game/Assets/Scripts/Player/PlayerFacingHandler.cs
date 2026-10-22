@@ -11,35 +11,54 @@ public class PlayerFacingHandler : MonoBehaviour
     public bool isFacingRight = true;
     public bool canTurn = true;
 
+    private PlayerMovement plMove;
+    private Rigidbody rb;
+
+    private void Awake()
+    {
+        plMove = GetComponent<PlayerMovement>();
+        rb = GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
+        if (opponentTrans == null)
+        {
+            foreach (var other in FindObjectsOfType<PlayerFacingHandler>())
+                if (other != this) { opponentTrans = other.transform; break; }
+            if (opponentTrans == null) Debug.LogWarning($"{name}: opponent が未設定です");
+        }
+        ApplyRotation();
+    }
+
     // Update is called once per frame
     private void Update()
     {
         UpdateFacing();
+        ApplyRotation();
     }
 
     private void UpdateFacing()
     {
-        if(!canTurn || opponentTrans == null) return;
+        if (opponentTrans == null) return;
+        if (plMove != null && !plMove.IsGrounded) return;
+        if (!canTurn || opponentTrans == null) return;
 
         // 相手より右なら右向き(true)
-        bool shouldFaceRight = opponentTrans.position.x > transform.position.x;
+        float dx = opponentTrans.position.x - transform.position.x;
+        if (Mathf.Abs(dx) < 0.01f) return;
 
-        // 現在の向きと違う場合だけ反転する
-        if (shouldFaceRight != isFacingRight)
-        {
-            isFacingRight = shouldFaceRight;
-            // 向きを反転する処理
-            OnDirectionChanged();
-        }
-
+        isFacingRight = dx > 0f;
     }
 
-    private void OnDirectionChanged()
+    private void ApplyRotation()
     {
-        float yAngle = isFacingRight ? 0f : 180f;
-        transform.rotation = Quaternion.Euler(0f, yAngle, 0f);
-        
-        Debug.Log($"現在の向き: {(isFacingRight ? "右" : "左")}");
+        float targetY = isFacingRight ? 0.0f : 180.0f;
+        if (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.y, targetY)) < 0.1f) return;
+
+        Quaternion q = Quaternion.Euler(0.0f, targetY, 0.0f);
+        transform.rotation = q;
+        if (rb != null) rb.rotation = q;
     }
 
     // 外部から相手をセットするためのメソッド
