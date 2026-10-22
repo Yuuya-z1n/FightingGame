@@ -26,7 +26,7 @@ public class PlayerHitReaction : MonoBehaviour
         if (frames <= 0) return;
 
         // 攻撃中に被弾したら攻撃をキャンセルする
-        if (attackHandler != null) attackHandler.CancelAttack();
+        //if (attackHandler != null) attackHandler.CancelAttack();
 
         // 連続ヒット時は、毎回ヒットスタンをやり直す
         stunEndTime = Time.time + ChangeFrameTime(frames);
