@@ -20,11 +20,21 @@ public enum AttackType
 [System.Serializable]
 public struct AttackData
 {
-    public string attackID; // 弱・中・強
-    public int startup;           // 発生フレーム
-    public int active;            // 持続フレーム
-    public int recovery;          // 硬直フレーム
-    public int damage;            // ダメージ
+    public string attackID;
+    public int startup;
+    public int active;
+    public int recovery;
+    public int damage;
     public string hitBoxName;
-}
 
+    // 判定の位置・大きさ（右向き基準、HitBox の原点からの相対）
+    public float hitboxOffsetX;
+    public float hitboxOffsetY;
+    public float hitboxSizeX;
+    public float hitboxSizeY;
+
+    public float knockbackX;
+    public float knockbackY;
+    public int hitStop;   // ヒットストップ（フレーム）
+    public int hitStun;   // ヒットスタン（フレーム。次のステップで使う）
+}

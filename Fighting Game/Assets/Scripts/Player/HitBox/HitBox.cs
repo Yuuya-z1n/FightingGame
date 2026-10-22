@@ -67,4 +67,18 @@ public class HitBox : MonoBehaviour
             Gizmos.DrawSphere(sphere.center, sphere.radius);
         }
     }
+
+    public void ApplyAttackData(AttackData data)
+    {
+        crntDamage = data.damage;
+        crntKnockback = new Vector2(data.knockbackX, data.knockbackY);
+        crntHitStop = data.hitStop;
+
+        if (col == null) col = GetComponent<Collider>();
+        if (col is BoxCollider box)
+        {
+            box.center = new Vector3(data.hitboxOffsetX, data.hitboxOffsetY, 0f);
+            box.size = new Vector3(data.hitboxSizeX, data.hitboxSizeY, box.size.z);
+        }
+    }
 }

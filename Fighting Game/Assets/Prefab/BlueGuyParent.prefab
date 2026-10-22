@@ -36,6 +36,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6871655058156798426}
+  - {fileID: 9006000881688277716}
   - {fileID: 8434892525350981220}
   - {fileID: 104020270014638485}
   m_Father: {fileID: 0}
@@ -171,7 +172,7 @@ GameObject:
   - component: {fileID: 2325881697019891655}
   - component: {fileID: 3845537870697638140}
   m_Layer: 6
-  m_Name: LeftArmHitBox (1)
+  m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,11 +187,11 @@ Transform:
   m_GameObject: {fileID: 5678240875292691814}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.27}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6871655061533212596}
+  m_Father: {fileID: 8614981465978816602}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2325881697019891655
 BoxCollider:
@@ -211,7 +212,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.1, z: 0.35}
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3845537870697638140
 MonoBehaviour:
@@ -225,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f04c9c0feed8b034fa1ccd4a911be0bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  owner: {fileID: 0}
+  owner: {fileID: 4844785703043970679}
   myHurtBox: {fileID: 7962056236760019245}
 --- !u!1 &6381010101519811552
 GameObject:
@@ -502,19 +503,11 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 143000011742214054, guid: 3bf11e47adbdd4542a4be54c81dac563, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 4000013835837212, guid: 3bf11e47adbdd4542a4be54c81dac563, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9006000881688277716}
+    m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3bf11e47adbdd4542a4be54c81dac563, type: 3}
 --- !u!4 &6871655058156798426 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4000010719486322, guid: 3bf11e47adbdd4542a4be54c81dac563, type: 3}
-  m_PrefabInstance: {fileID: 6868886784533307560}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &6871655061533212596 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4000013835837212, guid: 3bf11e47adbdd4542a4be54c81dac563, type: 3}
   m_PrefabInstance: {fileID: 6868886784533307560}
   m_PrefabAsset: {fileID: 0}
