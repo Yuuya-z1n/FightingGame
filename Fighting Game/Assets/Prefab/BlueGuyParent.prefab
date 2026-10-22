@@ -9,12 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8614981465978816602}
-  - component: {fileID: 7508820795659109317}
-  - component: {fileID: 7791606305826419297}
-  - component: {fileID: 398263677842246698}
-  - component: {fileID: 1313017521003566950}
   - component: {fileID: 1008045398747902874}
   - component: {fileID: 3953556240994710293}
+  - component: {fileID: 1909207267802264616}
+  - component: {fileID: 3146866683009232667}
+  - component: {fileID: 2358622332005261640}
+  - component: {fileID: 5076043753055369988}
   m_Layer: 6
   m_Name: BlueGuyParent
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 4844785703043970679}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.41598, y: 0.3, z: 1.0243847}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -41,75 +41,6 @@ Transform:
   - {fileID: 104020270014638485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7508820795659109317
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4844785703043970679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee53c2d61f4117243b0877715dbdc12b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 5
-  jumpForce: 20
-  jumpForwardSpeed: 6
-  jumpBackSpeed: 5
-  gravityScale: 30
-  groundDeceleration: 70
-  groundCheck: {fileID: 104020270014638485}
-  groundRadius: 0.05
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  isCanMove: 1
---- !u!114 &7791606305826419297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4844785703043970679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3072abfae0e84841ae5cfdd11191d57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerIndex: 0
---- !u!114 &398263677842246698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4844785703043970679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 431ea0e6454149b4c8cc82c71fed1ccd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  opponentTrans: {fileID: 0}
-  isFacingRight: 1
-  canTurn: 1
---- !u!114 &1313017521003566950
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4844785703043970679}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 772b8194939be204fbd8501251bc620b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inputHandler: {fileID: 7791606305826419297}
-  movement: {fileID: 7508820795659109317}
-  csvResourceName: test
-  attackHitBox: {fileID: 3845537870697638140}
-  throwHitBox: {fileID: 0}
 --- !u!54 &1008045398747902874
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -160,6 +91,75 @@ CapsuleCollider:
   m_Height: 5
   m_Direction: 1
   m_Center: {x: 0, y: 2.5, z: 0}
+--- !u!114 &1909207267802264616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4844785703043970679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec50211ae98d6944f91f673f7a36e6da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputHandler: {fileID: 5076043753055369988}
+  movement: {fileID: 3146866683009232667}
+  csvResourceName: test
+  attackHitBox: {fileID: 4712886974043947198}
+  throwHitBox: {fileID: 0}
+--- !u!114 &3146866683009232667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4844785703043970679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef89f661815340f4a85c8a83b068bf86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  jumpForce: 9
+  jumpForwardSpeed: 5
+  jumpBackSpeed: 4.5
+  gravityScale: 25
+  groundDeceleration: 30
+  groundCheck: {fileID: 104020270014638485}
+  groundRadius: 0.2
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  isCanMove: 1
+--- !u!114 &2358622332005261640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4844785703043970679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 582f76cb13ec51641b31add025584ce7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  opponentTrans: {fileID: 0}
+  isFacingRight: 1
+  canTurn: 1
+--- !u!114 &5076043753055369988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4844785703043970679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528e65e701eec5a4db6bbef4a2fcb8d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerIndex: 0
 --- !u!1 &5678240875292691814
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,9 +170,9 @@ GameObject:
   m_Component:
   - component: {fileID: 9006000881688277716}
   - component: {fileID: 2325881697019891655}
-  - component: {fileID: 3845537870697638140}
+  - component: {fileID: 4712886974043947198}
   m_Layer: 6
-  m_Name: HitBox
+  m_Name: AttackHitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,7 +214,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3845537870697638140
+--- !u!114 &4712886974043947198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -223,11 +223,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5678240875292691814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f04c9c0feed8b034fa1ccd4a911be0bb, type: 3}
+  m_Script: {fileID: 11500000, guid: 84bab29a3d9e1e2448c131e620805a22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 4844785703043970679}
-  myHurtBox: {fileID: 7962056236760019245}
+  myHurtBox: {fileID: 7573287232605110816}
 --- !u!1 &6381010101519811552
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,8 +237,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8434892525350981220}
-  - component: {fileID: 7962056236760019245}
   - component: {fileID: 2121965414799966540}
+  - component: {fileID: 7573287232605110816}
   m_Layer: 6
   m_Name: BodyHurtBox
   m_TagString: Untagged
@@ -261,21 +261,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8614981465978816602}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7962056236760019245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6381010101519811552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbf0d704263b5e745ad9b15d16b136b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: {fileID: 4844785703043970679}
-  rb: {fileID: 1008045398747902874}
-  maxHealth: 10000
 --- !u!65 &2121965414799966540
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -297,6 +282,21 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7573287232605110816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6381010101519811552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f160c446987f754992f47086b6367d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 4844785703043970679}
+  rb: {fileID: 1008045398747902874}
+  maxHealth: 10000
 --- !u!1 &7532352989026221474
 GameObject:
   m_ObjectHideFlags: 0
