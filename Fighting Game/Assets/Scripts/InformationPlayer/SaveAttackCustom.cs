@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class SaveAttackCustom : MonoBehaviour
 {
 
+    [Header("メニュー管理")]
+    [SerializeField] private MenuManager menuManager;
     StreamWriter sw;
     string filename =  "test.csv" ;
     [SerializeField] public AttackCustom attackCustom;
@@ -43,17 +45,11 @@ public class SaveAttackCustom : MonoBehaviour
 
     void Start()
     {
-        sw = new StreamWriter("SaveData.csv", false, Encoding.GetEncoding("Shift_JIS"));
-
-        string[] header = { "F", "J", "time" };
-        sw.WriteLine(string.Join(",", header));
-
         if (attackCustom == null)
             Debug.LogError("AttackCustomが見つかりません。", this);
 
         if (specialMove == null)
-            Debug.LogError("SpecialAttackCustomが見つかりません。", this);
-
+            Debug.LogError("SpecialCustomが見つかりません。", this);
     }
 
     public void SaveData()
@@ -64,16 +60,14 @@ public class SaveAttackCustom : MonoBehaviour
             return;
         }
 
+        // 保存先フォルダを固定
         string folderpath = Path.Combine(
-            Application.dataPath,
+            Application.persistentDataPath,
             "CustomData",
             "PlayerCustom"
         );
 
-        if (!Directory.Exists(folderpath))
-        {
-            Directory.CreateDirectory(folderpath);
-        }
+        Directory.CreateDirectory(folderpath);
 
         string filePath = Path.Combine(folderpath, filename);
         StringBuilder csv = new StringBuilder();
@@ -168,7 +162,14 @@ public class SaveAttackCustom : MonoBehaviour
 
     void Update()
     {
-        if(decidebuttonAction != null && decidebuttonAction.action.WasPressedThisFrame())
+        // Menuが開いている間は保存入力を受け付けない
+        if (menuManager != null && menuManager.IsMenuOpen)
+        {
+            return;
+        }
+
+        if (decidebuttonAction != null &&
+            decidebuttonAction.action.WasPressedThisFrame())
         {
             SaveData();
         }
