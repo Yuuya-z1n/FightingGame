@@ -189,12 +189,21 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""PrevPage"",
                     ""type"": ""Button"",
                     ""id"": ""bde74e27-af6e-4657-a363-8a4c3b5ee6cc"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Decidebutton"",
+                    ""type"": ""Button"",
+                    ""id"": ""8a85f1b0-3fd5-4bf4-b7a0-167881116d3d"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -480,7 +489,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ed7c3238-35b1-46d6-9ad6-9ab35fe222b2"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<XInputController>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -491,7 +500,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5a056dc4-6a82-403a-b24a-c0febb1e7141"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<XInputController>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -502,7 +511,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""284d417a-f4aa-4ae1-911c-458744a31894"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<XInputController>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -513,7 +522,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6bc51535-69bb-4ee5-991c-36d265147eec"",
-                    ""path"": ""<Gamepad>/dpad"",
+                    ""path"": ""<XInputController>/dpad"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -524,7 +533,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b2ab64a0-a22b-40c6-a080-6e76b5930851"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<XInputController>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -535,11 +544,22 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""1e4b6e52-12d1-48ee-8350-5d5288418e5d"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<XInputController>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PrevPage"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d2ea8f31-5f48-4b9d-9e3a-a15729cab780"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Decidebutton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -562,6 +582,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_NextPage = m_Player.FindAction("NextPage", throwIfNotFound: true);
         m_Player_PrevPage = m_Player.FindAction("PrevPage", throwIfNotFound: true);
+        m_Player_Decidebutton = m_Player.FindAction("Decidebutton", throwIfNotFound: true);
     }
 
     ~@PlayerAction()
@@ -654,6 +675,7 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_NextPage;
     private readonly InputAction m_Player_PrevPage;
+    private readonly InputAction m_Player_Decidebutton;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -713,6 +735,10 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/PrevPage".
         /// </summary>
         public InputAction @PrevPage => m_Wrapper.m_Player_PrevPage;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/Decidebutton".
+        /// </summary>
+        public InputAction @Decidebutton => m_Wrapper.m_Player_Decidebutton;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -775,6 +801,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @PrevPage.started += instance.OnPrevPage;
             @PrevPage.performed += instance.OnPrevPage;
             @PrevPage.canceled += instance.OnPrevPage;
+            @Decidebutton.started += instance.OnDecidebutton;
+            @Decidebutton.performed += instance.OnDecidebutton;
+            @Decidebutton.canceled += instance.OnDecidebutton;
         }
 
         /// <summary>
@@ -822,6 +851,9 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
             @PrevPage.started -= instance.OnPrevPage;
             @PrevPage.performed -= instance.OnPrevPage;
             @PrevPage.canceled -= instance.OnPrevPage;
+            @Decidebutton.started -= instance.OnDecidebutton;
+            @Decidebutton.performed -= instance.OnDecidebutton;
+            @Decidebutton.canceled -= instance.OnDecidebutton;
         }
 
         /// <summary>
@@ -946,5 +978,12 @@ public partial class @PlayerAction: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPrevPage(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Decidebutton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDecidebutton(InputAction.CallbackContext context);
     }
 }
