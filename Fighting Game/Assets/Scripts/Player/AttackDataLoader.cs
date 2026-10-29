@@ -30,22 +30,27 @@ public static class AttackDataLoader
 
             AttackData data = new AttackData
             {
-                attackID = v[0].Trim(),
-                startup = ParseInt(v, 1, row),
-                active = ParseInt(v, 2, row),
-                recovery = ParseInt(v, 3, row),
-                damage = ParseInt(v, 4, row),
-                hitBoxName = v[5].Trim(),
+                attackID = v[0].Trim(),                         // 攻撃
+                startup = ParseInt(v, 1, row),                  // 発生
+                active = ParseInt(v, 2, row),                   // 持続
+                recovery = ParseInt(v, 3, row),                 // 硬直
+                damage = ParseInt(v, 4, row),                   // ダメージ
+                hitBoxName = v[5].Trim(),                       // ヒットボックスの名前(Attack_HitBoxなど)
 
-                hitboxOffsetX = ParseFloat(v, 6, row),
-                hitboxOffsetY = ParseFloat(v, 7, row),
-                hitboxSizeX = ParseFloat(v, 8, row),
-                hitboxSizeY = ParseFloat(v, 9, row),
+                hitboxOffsetX = ParseFloat(v, 6, row),          // ヒットボックスのX座標オフセット
+                hitboxOffsetY = ParseFloat(v, 7, row),          // ヒットボックスのY座標オフセット
+                hitboxSizeX = ParseFloat(v, 8, row),            // ヒットボックスの幅
+                hitboxSizeY = ParseFloat(v, 9, row),            // ヒットボックスの高さ
 
-                knockbackX = ParseFloat(v, 10, row),
-                knockbackY = ParseFloat(v, 11, row),
-                hitStop = ParseInt(v, 12, row),
-                hitStun = ParseInt(v, 13, row)
+                knockbackX = ParseFloat(v, 10, row),            // ノックバックX
+                knockbackY = ParseFloat(v, 11, row),            // ノックバックY
+                hitStop = ParseInt(v, 12, row),                 // ヒットストップ
+                hitStun = ParseInt(v, 13, row),                 // ヒットスタン
+
+                guardType = v.Length > 14 ? v[14].Trim() : "",  // ガード種類
+                blockStun = ParseInt(v, 15, row),               // ガード硬直
+                blockKnockbackX = ParseFloat(v, 16, row),       // ガードの押し戻し
+                chipDamage = ParseInt(v, 17, row)               // 削りダメ―ジ(必殺技のみ。通常技の場合は0)
             };
 
             dictionary[data.attackID] = data;
