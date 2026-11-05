@@ -580,6 +580,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 617c7834535acbd45b3869590327952d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &961655139 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3492066765669489502, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
+  m_PrefabInstance: {fileID: 7996285068247585808}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074972792
 GameObject:
   m_ObjectHideFlags: 0
@@ -1558,6 +1569,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 6166561439245464661, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
     - target: {fileID: 4365072266073583114, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
+      propertyPath: dummySettings
+      value: 
+      objectReference: {fileID: 1947907191}
+    - target: {fileID: 4365072266073583114, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
       propertyPath: menuButtons.Array.size
       value: 8
       objectReference: {fileID: 0}
@@ -1617,6 +1632,10 @@ PrefabInstance:
       propertyPath: guardResultText
       value: 
       objectReference: {fileID: 1369882011}
+    - target: {fileID: 4418188427337312179, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
+      propertyPath: throwEscapeToggle
+      value: 
+      objectReference: {fileID: 961655139}
     - target: {fileID: 4597761256051485281, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 759.6
@@ -1907,7 +1926,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 2c77116749de22c4fada73307effcde6, type: 3}
     - target: {fileID: 7247218328476452369, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000019073486
+      value: -0.000011444092
       objectReference: {fileID: 0}
     - target: {fileID: 7251300420243874745, guid: 778c2106ccf57534da5f8cb0c067fbbb, type: 3}
       propertyPath: m_Sprite
