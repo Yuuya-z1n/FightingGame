@@ -11,8 +11,8 @@ namespace FightSim
 {
     public static class SimConst
     {
-        public const int UnitsPerWorld = 1000; // 1ワールド単位 = 1000 sim単位
-        public const int Fps = 60;
+        public const int unitsPerWorld = 1000; // 1ワールド単位 = 1000 sim単位
+        public const int fps = 60;
     }
 
     // 1フレーム分の入力（方向は画面上の絶対方向。前/後ろは向きから算出する）
@@ -27,7 +27,8 @@ namespace FightSim
         Light = 1 << 4,
         Medium = 1 << 5,
         Heavy = 1 << 6,
-        Throw = 1 << 7
+        Throw = 1 << 7,
+        Assist = 1 << 8   // アシスト + 方向 + 攻撃ボタンで必殺技
     }
 
     public static class InputUtil
@@ -68,9 +69,30 @@ namespace FightSim
     // 攻撃のガード種別（簡略化: 上段と下段のみ）
     public enum GuardType : byte
     {
-        High,        // 上段: 立ちガードでのみ防げる（ジャンプ攻撃も上段扱い）
+        High,        // 上段: 立ちガードでのみ防げる
         Low,         // 下段: しゃがみガードでのみ防げる
         Unblockable  // ガード不能（投げ）
+    }
+
+    // ガード判定の結果（デバッグ表示用に、失敗の理由も区別する）
+    public enum GuardResult : byte
+    {
+        Blocked,          // ガード成功
+        FailUnblockable,  // ガード不能の技（投げ）
+        FailState,        // ガードできない状態（攻撃中・空中・食らい中など）
+        FailDirection,    // 相手から離れる方向を入力していない
+        FailStandVsLow,   // 立ちガードでは下段を防げない
+        FailCrouchVsHigh  // しゃがみガードでは上段を防げない
+    }
+
+    // 直近のヒット結果の記録（デバッグ表示用。ロールバックの状態には含めない）
+    public struct HitLog
+    {
+        public bool valid;
+        public int frame;        // 記録したティック
+        public bool blocked;
+        public GuardResult guard;
+        public int attackIndex;  // AttackType の値
     }
 
     public enum FighterStateId : byte
@@ -78,16 +100,43 @@ namespace FightSim
         Idle,
         WalkForward,
         WalkBack,
-        Crouch,
+        Step,
+        Crouch,         // しゃがみ
         Jump,
-        Attack,     // 地上攻撃
+        Attack,         // (あとで差し替え)
+        LightAttack,     // 弱攻撃
+        MediumAttack,   // 中攻撃
+        HeavyAttack,    // 強攻撃
+        SpecialAttack1, // 必殺技1(昇竜)
+        //SpecialAttack2, // 必殺技2
+        //SpecialAttack3, // 必殺技3
+
+        ThrowAttack,    // 投げ
+        ThrowMiss,      // 投げスカリ
+        ThrowEsc,       // 投げ抜け
         AirAttack,  // 空中攻撃
         HitStun,    // 食らい硬直
+        AirHit,     // 空中食らい
         BlockStun,  // ガード硬直
+        Down,       // (KO使いまわしのモーション予定
+        WakeUp,     // 起き上がり
+        Win,
         KO
     }
 
-    // 調整用パラメータ（Inspector から編集できる）
+    // 必殺技の割り当て
+    [Serializable]
+    public struct SpecialBinding
+    {
+        // アシストと同時に入力する方向（テンキー表記。向きを考慮: 前=6, 後ろ=4, 下=2, 上=8,
+        // 前下=3, 後ろ下=1, 前上=9, 後ろ上=7, ニュートラル=5）
+        public int direction;
+
+        // 弱版の技。中版は +1、強版は +2 の AttackType を使う（AttackType の並びを 弱,中,強 の連番にしておく）
+        public AttackType firstAttack;
+    }
+
+    // 調整用パラメータ
     [Serializable]
     public class FighterParams
     {
@@ -103,9 +152,22 @@ namespace FightSim
         public int jumpBackSpeed = 75;
         public int gravity = 7;              // sim単位/フレーム²（7 ≒ 25/秒²）
         public int hitStunGroundFriction = 2; // 食らい・ガード硬直中、地上でのノックバックの減速
+        public int downFrame = 40;            // ダウン中のフレーム数（起き上がりまでの時間）
+        public int wakeUpFrame = 20;            // 起き上がりのフレーム数
+
 
         // ---- 入力 ----
         public int inputBufferFrames = 6;    // 先行入力の受付フレーム数
+
+        // ---- 必殺技 ----
+        // 通常技がヒット/ガードされた後に、必殺技でキャンセルできるか
+        public bool allowSpecialCancel = true;
+
+        // アシスト + 方向 + 攻撃ボタン で出る必殺技。他の必殺技は、ここに行を足していく
+        public SpecialBinding[] specialBindings = new SpecialBinding[]
+        {
+            new SpecialBinding { direction = 6, firstAttack = AttackType.Special1_L }  // 前 = 昇竜
+        };
 
         // ---- 判定ボックス（幅・高さ。原点 = 足元の中心）----
         public int pushWidth = 600;          // 押し合い判定
@@ -135,13 +197,19 @@ namespace FightSim
         public int hitboxHeight;
         public int knockbackX;    // sim単位/フレーム
         public int knockbackY;
-        public int hitStop;       // ヒットストップのフレーム数（ヒット・ガード共通）
+        public int hitStop;       // ヒットストップのフレーム数（ヒット・ガード共通。csvから硬直データ読込）
         public int hitStun;       // ヒットスタンのフレーム数
 
         public GuardType guardType; // 上段 / 下段 / ガード不能
         public int blockStun;       // ガード硬直のフレーム数
         public int blockKnockbackX; // ガード時の押し戻し（sim単位/フレーム）
         public int chipDamage;      // 削りダメージ（必殺技のみ値を入れる）
+
+        public int startVelX;       // 技の開始時の速度（向いている方向が正。sim単位/フレーム）。昇竜などの踏み込み・ジャンプ用
+        public int startVelY;       // 技の開始時の上方向の速度
+        public int invulnFrames;    // 技の開始から何フレームの間、攻撃を受けないか（昇竜の無敵など）
+        public bool stopXAtApex;    // 最高到達点（上昇が終わった瞬間）で、横移動を止めて垂直に落ちるか（昇竜など）
+        public int knockDownCombo;  // ダウンする技のコンボ数
 
         public bool IsValid { get { return active > 0; } }
         public int TotalFrames { get { return startup + active + recovery; } }
@@ -166,6 +234,11 @@ namespace FightSim
             r.blockStun = d.blockStun;
             r.blockKnockbackX = ToUnitsPerFrame(d.blockKnockbackX);
             r.chipDamage = d.chipDamage;
+            r.startVelX = ToUnitsPerFrame(d.startVelX);
+            r.startVelY = ToUnitsPerFrame(d.startVelY);
+            r.invulnFrames = d.invulnFrames;
+            r.stopXAtApex = d.stopXAtApex != 0;
+            r.knockDownCombo = d.knockDownCombo;
             return r;
         }
 
@@ -181,13 +254,13 @@ namespace FightSim
 
         private static int ToUnits(float v)
         {
-            return (int)Math.Round(v * SimConst.UnitsPerWorld, MidpointRounding.AwayFromZero);
+            return (int)Math.Round(v * SimConst.unitsPerWorld, MidpointRounding.AwayFromZero);
         }
 
         // 「ワールド単位/秒」を「sim単位/フレーム」へ
         private static int ToUnitsPerFrame(float v)
         {
-            return (int)Math.Round(v * SimConst.UnitsPerWorld / SimConst.Fps, MidpointRounding.AwayFromZero);
+            return (int)Math.Round(v * SimConst.unitsPerWorld / SimConst.fps, MidpointRounding.AwayFromZero);
         }
     }
 
@@ -224,6 +297,8 @@ namespace FightSim
         public int hitStunFrames; // ヒットスタン / ガード硬直の長さ
         public bool guardCrouch;  // ガード硬直中の姿勢（true = しゃがみ）
         public int health;
+        public int comboCount;    // 今のコンボで受けたヒット数
+        public bool knockdown;    // ダウン確定
 
         public InputButtons prevButtons; // 前フレームの入力（押した瞬間の検出用）
         public int bufLight;      // 先行入力の残りフレーム

@@ -1,7 +1,20 @@
 using System;
+using UnityEditor;
 
 namespace FightSim
 {
+    // 攻撃判定のチェック結果の記録（デバッグ表示用。ロールバックの状態には含めない）
+    public struct HitCheckLog
+    {
+        public bool valid;
+        public int frame;               // 判定を行ったティック
+        public SimRect hit;             // 攻撃側の判定
+        public SimRect hurt;            // 防御側の食らい判定
+        public bool overlap;            // 重なったか
+        public bool invulnerable;       // 防御側が無敵で、当たらなかったか
+        public FighterStateId defenderState; // その時の防御側の状態
+    }
+
     /// <summary>
     /// 対戦のシミュレーション本体。UnityEngine に依存しない。
     /// Tick(入力1P, 入力2P) を 1/60 秒ごとに1回呼ぶだけで、全てが1フレーム進む。
@@ -13,6 +26,8 @@ namespace FightSim
         private readonly FighterParams p;
         private readonly AttackFrameData[] attacks; // AttackType の値でインデックス
         private readonly FighterSimState[] f = new FighterSimState[2];
+        private readonly HitLog[] lastHit = new HitLog[2]; // デバッグ用（防御側ごとの直近のヒット結果）
+        private readonly HitCheckLog[] lastCheck = new HitCheckLog[2]; // デバッグ用（攻撃側ごとの直近の判定チェック）
         private int frame;
 
         public int Frame { get { return frame; } }
@@ -33,6 +48,10 @@ namespace FightSim
         public void Reset()
         {
             frame = 0;
+            lastHit[0] = new HitLog();
+            lastHit[1] = new HitLog();
+            lastCheck[0] = new HitCheckLog();
+            lastCheck[1] = new HitCheckLog();
             InitFighter(0, -p.startX, true);
             InitFighter(1, p.startX, false);
         }
@@ -113,7 +132,7 @@ namespace FightSim
             if (InputUtil.Has(pressed, InputButtons.Throw)) s.bufThrow = p.inputBufferFrames;
 
             s.prevButtons = input;
-            s.dirHistory = (s.dirHistory << 4) | (ulong)InputUtil.Numpad(input, s.facingRight);
+            s.dirHistory = (s.dirHistory << 4) | (ulong)(uint)InputUtil.Numpad(input, s.facingRight);
         }
 
         // ============================================================
@@ -133,12 +152,27 @@ namespace FightSim
                         EndToNeutral(ref s);
                     }
                     break;
+
                 case FighterStateId.HitStun:
                 case FighterStateId.BlockStun:
+                    // ダウン確定の空中被弾は着地まで硬直が解けない
+                    if (s.stateId == FighterStateId.HitStun && s.knockdown) break;
                     if (s.stateFrame >= s.hitStunFrames)
                     {
                         EndToNeutral(ref s);
                     }
+                    break;
+
+                case FighterStateId.Down:
+                    if(s.stateFrame >= p.downFrame)
+                    {
+                        s.stateId = FighterStateId.WakeUp;
+                        s.stateFrame = 0;
+                    }
+                    break;
+
+                case FighterStateId.WakeUp:
+                    if (s.stateFrame >= p.wakeUpFrame) EndToNeutral(ref s);
                     break;
             }
 
@@ -156,6 +190,11 @@ namespace FightSim
                     TryStartAttack(ref s, true);
                     break;
 
+                case FighterStateId.Attack:
+                    // 通常技がヒット/ガードされた後は、必殺技でキャンセルできる
+                    TryCancelIntoSpecial(ref s);
+                    break;
+
                 case FighterStateId.BlockStun:
                     // ガード中は、下を押している間だけしゃがみ姿勢（ガード硬直は途切れない）
                     s.guardCrouch = InputUtil.Vertical(input) < 0;
@@ -164,6 +203,8 @@ namespace FightSim
 
                 case FighterStateId.HitStun:
                 case FighterStateId.KO:
+                case FighterStateId.Down:
+                case FighterStateId.WakeUp:
                     // 地上ではノックバックの速度を徐々に減らす
                     if (s.Grounded) s.velX = MoveToward(s.velX, 0, p.hitStunGroundFriction);
                     break;
@@ -207,23 +248,153 @@ namespace FightSim
         }
 
         // 先行入力された攻撃ボタンがあれば、攻撃を開始する
+        //   ・地上では、アシスト + 割り当てのある方向 + 弱/中/強 なら、必殺技（通常技より優先）
+        //   ・それ以外は通常技（投げボタン > 強 > 中 > 弱 の優先順）
         private bool TryStartAttack(ref FighterSimState s, bool air)
         {
+            if (!air && s.bufThrow == 0)
+            {
+                int special = FindBufferedSpecial(ref s);
+                if (special >= 0)
+                {
+                    StartAttack(ref s, special, false);
+                    return true;
+                }
+            }
+
+            // 空中攻撃はすべて同じ技(弱中強で違いがない)　投げはしない
+            if (air) return TryStartAirAttack(ref s);
+
+            // 地上で下を押している間は、しゃがみ版の通常技（空中では立ち版のデータを使う）
+            bool crouching = !air && InputUtil.Vertical(s.prevButtons) < 0;
+
             int idx = -1;
             if (s.bufThrow > 0) { idx = (int)AttackType.Throw; s.bufThrow = 0; }
-            else if (s.bufHeavy > 0) { idx = (int)AttackType.Heavy; s.bufHeavy = 0; }
-            else if (s.bufMedium > 0) { idx = (int)AttackType.Medium; s.bufMedium = 0; }
-            else if (s.bufLight > 0) { idx = (int)AttackType.Light; s.bufLight = 0; }
+            else if (s.bufHeavy > 0) { idx = NormalAttackIndex(2, crouching); s.bufHeavy = 0; }
+            else if (s.bufMedium > 0) { idx = NormalAttackIndex(1, crouching); s.bufMedium = 0; }
+            else if (s.bufLight > 0) { idx = NormalAttackIndex(0, crouching); s.bufLight = 0; }
 
             if (idx < 0 || idx >= attacks.Length) return false;
             if (!attacks[idx].IsValid) return false;
 
+            StartAttack(ref s, idx, air);
+            return true;
+        }
+
+        // 攻撃の開始（通常技・必殺技共通）
+        private void StartAttack(ref FighterSimState s, int idx, bool air)
+        {
             s.attackIndex = idx;
             s.attackHasHit = false;
             s.stateId = air ? FighterStateId.AirAttack : FighterStateId.Attack;
             s.stateFrame = 0;
-            if (!air) s.velX = 0;
+
+            if (!air)
+            {
+                // 通常技は速度 0。昇竜などは、技のデータで決まる速度で飛び出す
+                AttackFrameData atk = attacks[idx];
+                int dir = s.facingRight ? 1 : -1;
+                s.velX = dir * atk.startVelX;
+                s.velY = atk.startVelY;
+            }
+        }
+
+        // 空中攻撃の開始
+        private bool TryStartAirAttack(ref FighterSimState s)
+        {
+            int strength;
+            if (s.bufHeavy > 0) strength = 2;
+            else if (s.bufMedium > 0) strength = 1;
+            else if (s.bufLight > 0) strength = 0;
+            else return false;  // 投げはしない
+
+            s.bufLight = 0;
+            s.bufMedium = 0;
+            s.bufHeavy = 0;
+
+            int idx = (int)AttackType.Air_Attack;
+
+            if (idx >= attacks.Length || !attacks[idx].IsValid) idx = NormalAttackIndex(strength, false);
+            if (idx >= attacks.Length || !attacks[idx].IsValid) return false;
+
+            StartAttack(ref s, idx, true);
             return true;
+        }
+
+
+        private static bool IsSpecialAttack(int attackIndex)
+        {
+            return attackIndex >= (int)AttackType.Special1_L;
+        }
+
+        // しゃがみ通常技か
+        private static bool IsCrouchAttack(int attackIndex)
+        {
+            return attackIndex >= (int)AttackType.Crouch_Light && attackIndex <= (int)AttackType.Crouch_Heavy;
+        }
+
+        // 通常技の番号（strength: 0 = 弱, 1 = 中, 2 = 強）。
+        // AttackType は Stand_Light, Stand_Medium, Stand_Heavy / Crouch_Light, ... の連番
+        private int NormalAttackIndex(int strength, bool crouching)
+        {
+            int stand = (int)AttackType.Stand_Light + strength;
+            if (!crouching) return stand;
+
+            int crouch = (int)AttackType.Crouch_Light + strength;
+            // しゃがみ版のデータが無ければ、立ち版を使う（CSV の移行途中でも動くように）
+            if (crouch < attacks.Length && attacks[crouch].IsValid) return crouch;
+            return stand;
+        }
+
+        // アシストが押されていて、先行入力された 弱/中/強 と現在の方向に、必殺技が割り当てられていれば、
+        // その技の番号を返す（先行入力を消費する）。無ければ -1（通常技にフォールバックする）
+        private int FindBufferedSpecial(ref FighterSimState s)
+        {
+            if (p.specialBindings == null) return -1;
+            if (!InputUtil.Has(s.prevButtons, InputButtons.Assist)) return -1;
+
+            // 弱・中・強のどれが押されたか（強い方を優先）
+            int strength;
+            if (s.bufHeavy > 0) strength = 2;
+            else if (s.bufMedium > 0) strength = 1;
+            else if (s.bufLight > 0) strength = 0;
+            else return -1;
+
+            int dir = InputUtil.Numpad(s.prevButtons, s.facingRight);
+            for (int i = 0; i < p.specialBindings.Length; i++)
+            {
+                if (p.specialBindings[i].direction != dir) continue;
+
+                int idx = (int)p.specialBindings[i].firstAttack + strength;
+                if (idx < 0 || idx >= attacks.Length || !attacks[idx].IsValid) return -1; // データが無ければ通常技
+
+                if (strength == 2) s.bufHeavy = 0;
+                else if (strength == 1) s.bufMedium = 0;
+                else s.bufLight = 0;
+                return idx;
+            }
+            return -1;
+        }
+
+        // 通常技がヒット/ガードされた後、アシスト + 方向 + 攻撃ボタンの入力があれば、必殺技でキャンセルする
+        private void TryCancelIntoSpecial(ref FighterSimState s)
+        {
+            if (!p.allowSpecialCancel) return;
+            if (s.attackIndex < 0 || IsSpecialAttack(s.attackIndex)) return; // 通常技からのみ
+            if (!s.attackHasHit || !s.Grounded) return;
+
+            int special = FindBufferedSpecial(ref s);
+            if (special >= 0) StartAttack(ref s, special, false);
+        }
+
+        // 技の出始めの無敵（昇竜など）。CSV の invulnFrames の間は、攻撃を受けない
+        private bool IsInvulnerable(FighterSimState s)
+        {
+            // ダウン～起き上がり中は常に無敵
+            if (s.stateId == FighterStateId.Down || s.stateId == FighterStateId.WakeUp) return true;
+            if (s.stateId != FighterStateId.Attack && s.stateId != FighterStateId.AirAttack) return false;
+            if (s.attackIndex < 0 || s.attackIndex >= attacks.Length) return false;
+            return s.stateFrame < attacks[s.attackIndex].invulnFrames;
         }
 
         private void StartJump(ref FighterSimState s, int dx)
@@ -257,6 +428,8 @@ namespace FightSim
             s.attackIndex = -1;
             s.attackHasHit = false;
             s.stateFrame = 0;
+            s.knockdown = false;
+            s.comboCount = 0;
             s.stateId = s.Grounded ? FighterStateId.Idle : FighterStateId.Jump;
         }
 
@@ -265,6 +438,15 @@ namespace FightSim
         {
             bool wasAirborne = !s.Grounded;
             if (wasAirborne) s.velY -= p.gravity;
+
+            // 技のデータで指定されていれば、最高到達点で横移動を止めて、垂直に落ちる（昇竜など）
+            if (wasAirborne && s.velY <= 0 &&
+                s.stateId == FighterStateId.Attack &&
+                s.attackIndex >= 0 && s.attackIndex < attacks.Length &&
+                attacks[s.attackIndex].stopXAtApex)
+            {
+                s.velX = 0;
+            }
 
             s.posX += s.velX;
             s.posY += s.velY;
@@ -294,7 +476,22 @@ namespace FightSim
                     s.stateId = FighterStateId.Idle;
                     s.stateFrame = 0;
                     break;
-                    // HitStun / KO は着地しても状態を維持（速度は地上摩擦で減る）
+
+                case FighterStateId.Attack:
+                    // 昇竜など、地上技で空中に出た技。着地で横移動は止まるが、技のフレームは続く
+                    s.velX = 0;
+                    break;
+            
+                case FighterStateId.HitStun:
+                    // ダウン確定であれば着地でダウン移項
+                    if (s.knockdown)
+                    {
+                        s.velX = 0;
+                        s.knockdown = false;
+                        s.stateId = FighterStateId.Down;
+                        s.stateFrame = 0;
+                    }
+                    break;
             }
         }
 
@@ -305,7 +502,10 @@ namespace FightSim
         private static bool IsCrouchPose(FighterSimState s)
         {
             return s.stateId == FighterStateId.Crouch ||
-                   (s.stateId == FighterStateId.BlockStun && s.guardCrouch);
+                   s.stateId == FighterStateId.Down ||
+                   s.stateId == FighterStateId.WakeUp ||
+                   (s.stateId == FighterStateId.BlockStun && s.guardCrouch) ||
+                   (s.stateId == FighterStateId.Attack && IsCrouchAttack(s.attackIndex));
         }
 
         private static bool IsStunned(FighterSimState s)
@@ -488,7 +688,23 @@ namespace FightSim
 
             SimRect hit;
             if (!TryGetHitRect(attacker, out hit)) return false;
-            return hit.Overlaps(GetHurtRect(defender));
+
+            SimRect hurt = GetHurtRect(defender);
+            bool overlap = hit.Overlaps(hurt);
+            bool invulnerable = overlap && IsInvulnerable(f[defender]);
+
+            // デバッグ用に、判定が出ているフレームごとの結果を記録しておく
+            HitCheckLog log = new HitCheckLog();
+            log.valid = true;
+            log.frame = frame;
+            log.hit = hit;
+            log.hurt = hurt;
+            log.overlap = overlap;
+            log.invulnerable = invulnerable;
+            log.defenderState = f[defender].stateId;
+            lastCheck[attacker] = log;
+
+            return overlap && !invulnerable;
         }
 
         private void ResolveHits()
@@ -504,8 +720,10 @@ namespace FightSim
             bool face1 = f[1].facingRight;
 
             // ガードされるかどうかも、適用前の状態で決める
-            bool blocked0 = hit0 && IsBlocked(0, 1, atk0);
-            bool blocked1 = hit1 && IsBlocked(1, 0, atk1);
+            GuardResult guard0 = hit0 ? EvaluateGuard(0, 1, EffectiveLevel(0, atk0)) : GuardResult.FailState;
+            GuardResult guard1 = hit1 ? EvaluateGuard(1, 0, EffectiveLevel(1, atk1)) : GuardResult.FailState;
+            bool blocked0 = hit0 && guard0 == GuardResult.Blocked;
+            bool blocked1 = hit1 && guard1 == GuardResult.Blocked;
             bool crouchGuard0 = InputUtil.Vertical(f[1].prevButtons) < 0; // 1P の攻撃を 2P がガードする時の姿勢
             bool crouchGuard1 = InputUtil.Vertical(f[0].prevButtons) < 0;
 
@@ -521,6 +739,10 @@ namespace FightSim
                 f[1].hitStopFrames = Math.Max(f[1].hitStopFrames, atk1.hitStop);
             }
 
+            // デバッグ用に、ヒット結果を記録しておく（攻撃側の技の番号は適用前の値）
+            if (hit0) RecordHit(1, blocked0, guard0, f[0].attackIndex);
+            if (hit1) RecordHit(0, blocked1, guard1, f[1].attackIndex);
+
             // 防御側
             if (hit0)
             {
@@ -534,13 +756,31 @@ namespace FightSim
             }
         }
 
-        // defender が、attacker の攻撃 atk をガードできるか
-        //   ・ガードできるのは、地上の動ける状態（またはガード硬直中）で、相手から離れる方向を入力している時
-        //   ・上段は立ちガード、下段はしゃがみガードでのみ防げる（ジャンプ攻撃は上段）
-        //   ・投げ（ガード不能）は防げない
-        private bool IsBlocked(int attacker, int defender, AttackFrameData atk)
+        private void RecordHit(int defender, bool blocked, GuardResult guard, int attackIndex)
         {
-            if (atk.guardType == GuardType.Unblockable) return false;
+            HitLog log = new HitLog();
+            log.valid = true;
+            log.frame = frame;
+            log.blocked = blocked;
+            log.guard = guard;
+            log.attackIndex = attackIndex;
+            lastHit[defender] = log;
+        }
+
+        // ジャンプ攻撃は、CSV の指定に関係なく上段扱い（ガード不能の技は除く）
+        private GuardType EffectiveLevel(int attacker, AttackFrameData atk)
+        {
+            if (atk.guardType == GuardType.Unblockable) return GuardType.Unblockable;
+            return (f[attacker].stateId == FighterStateId.AirAttack) ? GuardType.High : atk.guardType;
+        }
+
+        // defender が、attacker から level の攻撃を受けた時にガードできるか。失敗の場合は理由を返す
+        //   ・ガードできるのは、地上の動ける状態（またはガード硬直中）で、相手から離れる方向を入力している時
+        //   ・上段は立ちガード、下段はしゃがみガードでのみ防げる
+        //   ・投げ（ガード不能）は防げない
+        private GuardResult EvaluateGuard(int attacker, int defender, GuardType level)
+        {
+            if (level == GuardType.Unblockable) return GuardResult.FailUnblockable;
 
             FighterSimState d = f[defender];
             switch (d.stateId)
@@ -552,20 +792,43 @@ namespace FightSim
                 case FighterStateId.BlockStun:
                     break;
                 default:
-                    return false;
+                    return GuardResult.FailState;
             }
-            if (!d.Grounded) return false; // 空中ガードはない
+            if (!d.Grounded) return GuardResult.FailState; // 空中ガードはない
 
             // ガード方向 = 相手から離れる方向（めくりでも、向きではなく位置関係で判定する）
             int away;
             if (d.posX > f[attacker].posX) away = 1;
             else if (d.posX < f[attacker].posX) away = -1;
             else away = d.facingRight ? -1 : 1;
-            if (InputUtil.Horizontal(d.prevButtons) != away) return false;
+            if (InputUtil.Horizontal(d.prevButtons) != away) return GuardResult.FailDirection;
 
             bool crouching = InputUtil.Vertical(d.prevButtons) < 0;
-            GuardType level = (f[attacker].stateId == FighterStateId.AirAttack) ? GuardType.High : atk.guardType;
-            return (level == GuardType.High) ? !crouching : crouching;
+            if (level == GuardType.High)
+            {
+                return crouching ? GuardResult.FailCrouchVsHigh : GuardResult.Blocked;
+            }
+            return crouching ? GuardResult.Blocked : GuardResult.FailStandVsLow;
+        }
+
+        // ---- デバッグ表示用 ----
+
+        // 「今この入力で、相手から level の攻撃を受けたらガードできるか」
+        public GuardResult PreviewGuard(int defender, GuardType level)
+        {
+            return EvaluateGuard(1 - defender, defender, level);
+        }
+
+        // 防御側 defender の、直近のヒット結果
+        public HitLog GetLastHit(int defender)
+        {
+            return lastHit[defender];
+        }
+
+        // 攻撃側 attacker の、直近の判定チェック（判定が出ていたフレームの矩形と、重なったか）
+        public HitCheckLog GetLastCheck(int attacker)
+        {
+            return lastCheck[attacker];
         }
 
         private void ApplyHitToDefender(ref FighterSimState d, AttackFrameData atk, bool attackerFacingRight)
@@ -583,13 +846,28 @@ namespace FightSim
 
             d.hitStopFrames = Math.Max(d.hitStopFrames, atk.hitStop);
             d.hitStunFrames = atk.hitStun;
+
+            // コンボ数を数え、技のしきい値に達していればダウン確定
+            d.comboCount++;
+            if (atk.knockDownCombo > 0 && d.comboCount >= atk.knockDownCombo) d.knockdown = true;
+
             d.stateId = (d.health <= 0) ? FighterStateId.KO : FighterStateId.HitStun;
             d.stateFrame = 0;
+
+            if (d.health <= 0)
+            {
+                d.knockdown = false;           // KO はダウンより優先
+            }
+            else if (d.knockdown && d.Grounded)
+            {
+                d.knockdown = false;           // 浮かない被弾（knockbackY が 0 以下）は、その場でダウン
+                d.stateId = FighterStateId.Down;
+            }
         }
 
         private void ApplyBlockToDefender(ref FighterSimState d, AttackFrameData atk, bool attackerFacingRight, bool crouching)
         {
-            // 削りダメージ
+            // 削りダメージ（CSV の chipDamage。必殺技のみ値を入れる）
             int chip = atk.chipDamage;
             if (chip < 0) chip = 0;
             if (!p.chipCanKill && chip >= d.health) chip = d.health - 1;

@@ -11,10 +11,17 @@ namespace MyFunctions
 }
 public enum AttackType
 {
-    Light,
-    Medium,
-    Heavy,
-    Throw
+    Stand_Light,
+    Stand_Medium,
+    Stand_Heavy,
+    Crouch_Light,
+    Crouch_Medium,
+    Crouch_Heavy,
+    Throw,
+    Special1_L,   // 必殺技1（昇竜）弱
+    Special1_M,   // 必殺技1（昇竜）中
+    Special1_H,   // 必殺技1（昇竜）強
+    Air_Attack,
 }
 
 [System.Serializable]
@@ -42,4 +49,10 @@ public struct AttackData
     public int blockStun;          // ガード硬直
     public float blockKnockbackX;  // ガード時の押し戻し
     public int chipDamage;         // 削りダメージ
+
+    public float startVelX;     // 技の開始時の横速度
+    public float startVelY;     // 技の開始時の上方向の速度（昇竜のジャンプなど）
+    public int invulnFrames;    // 技の開始から無敵になるフレーム数
+    public int stopXAtApex;
+    public int knockDownCombo;  // 相手へのヒット数カウント。この値以上になるとダウン(0はダウンしない)
 }

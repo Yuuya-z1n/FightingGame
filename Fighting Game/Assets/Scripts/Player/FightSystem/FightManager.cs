@@ -25,7 +25,7 @@ public class FightManager : MonoBehaviour
     [SerializeField] private bool showBoxes = true;
     [SerializeField] private bool enableResetKey = true; // R キーで試合をやり直す
 
-    private const float TickDelta = 1f / SimConst.Fps;
+    private const float TickDelta = 1f / SimConst.fps;
     private const int MaxTicksPerFrame = 4; // 処理落ち時に溜まった分を一気に消化しすぎない
 
     private MatchSim sim;
@@ -37,6 +37,7 @@ public class FightManager : MonoBehaviour
 
     private void Awake()
     {
+        ValidateSpecialBindings();
         AttackFrameData[] attacks = LoadAttackTable();
         sim = new MatchSim(fighterParams, attacks);
         input1 = new LocalInputSource(0);
@@ -46,6 +47,25 @@ public class FightManager : MonoBehaviour
     private void Start()
     {
         SnapViews();
+    }
+
+    // Special Bindings が、必殺技の「弱版（〜_L）」を指しているか確認する。
+    // Inspector は enum を番号で保存するので、AttackType の並びを変えると、別の技を指してしまうことがある
+    private void ValidateSpecialBindings()
+    {
+        if (fighterParams.specialBindings == null) return;
+
+        for (int i = 0; i < fighterParams.specialBindings.Length; i++)
+        {
+            AttackType first = fighterParams.specialBindings[i].firstAttack;
+            bool isSpecial = (int)first >= (int)AttackType.Special1_L;
+            bool isLightVersion = first.ToString().EndsWith("_L");
+            if (!isSpecial || !isLightVersion)
+            {
+                Debug.LogError($"Special Bindings の {i} 番目が {first} になっています。" +
+                               "必殺技の弱版（Special1_L など）を Inspector で選び直してください。");
+            }
+        }
     }
 
     // CSV から、AttackType の値をインデックスにした技データの配列を作る
@@ -115,7 +135,7 @@ public class FightManager : MonoBehaviour
         if (view2 != null) view2.Snap(sim.Get(1));
     }
 
-    // ---- 判定ボックスの可視化 ----
+    // ---- 判定ボックスの可視化（Scene ビュー。Game ビューは Gizmos を有効にすると表示）----
     private void OnDrawGizmos()
     {
         if (!showBoxes || sim == null || view1 == null || view2 == null) return;
@@ -126,6 +146,14 @@ public class FightManager : MonoBehaviour
 
             DrawRect(view, sim.GetPushRect(i), new Color(0.2f, 0.4f, 1f, 0.9f));   // 押し合い: 青
             DrawRect(view, sim.GetHurtRect(i), new Color(0f, 1f, 0f, 0.9f));       // 食らい: 緑
+
+            if (sim.Get(i).stateId == FighterStateId.BlockStun)
+            {
+                // ガード中: 食らい判定の少し外側に水色の枠
+                SimRect g = sim.GetHurtRect(i);
+                g.minX -= 80; g.maxX += 80; g.minY -= 0; g.maxY += 80;
+                DrawRect(view, g, new Color(0.2f, 1f, 1f, 1f));
+            }
 
             SimRect hit;
             if (sim.TryGetHitRect(i, out hit))

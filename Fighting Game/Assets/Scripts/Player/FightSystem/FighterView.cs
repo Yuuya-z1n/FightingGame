@@ -1,5 +1,6 @@
 using UnityEngine;
 using FightSim;
+using static MyFunctions.GlobalFunctions;
 
 /// <summary>
 /// キャラクターの「見た目」担当。シミュレーションの状態を Transform に反映するだけで、
@@ -15,6 +16,9 @@ public class FighterView : MonoBehaviour
     [Tooltip("キャラの原点が足元より上にある場合の補正（ワールド単位）。" +
              "原点が足元なら 0、体の中心なら足元から原点までの高さ")]
     [SerializeField] private float pivotOffsetY = 0f;
+
+    [Header("アニメーター")]
+    [SerializeField] private Animator anim;
 
     // 奥行き（Z）はシーン上の初期値で固定
     private float fixedZ;
@@ -34,13 +38,15 @@ public class FighterView : MonoBehaviour
     {
         fixedZ = transform.position.z;
         groundTopY = CalcGroundTopY();
+        anim = GetComponentInChildren<Animator>();
+        if (anim == null) { Debug.LogError("FighterView の Animator が見当たりません。"); return; }
     }
 
     private float CalcGroundTopY()
     {
         if (groundObj == null)
         {
-            Debug.LogError($"{name}: FighterView の groundObj が未設定です。Y=0 を地面として扱います。");
+            Debug.LogError($"{name}: FighterView の groundObj が未設定です。");
             return 0f;
         }
 
@@ -57,8 +63,8 @@ public class FighterView : MonoBehaviour
     public Vector3 ToWorld(float simX, float simY)
     {
         return new Vector3(
-            simX / SimConst.UnitsPerWorld,
-            groundTopY + pivotOffsetY + simY / SimConst.UnitsPerWorld,
+            simX / SimConst.unitsPerWorld,
+            groundTopY + pivotOffsetY + simY / SimConst.unitsPerWorld,
             fixedZ);
     }
 
@@ -76,6 +82,7 @@ public class FighterView : MonoBehaviour
     {
         prevPos = currPos;
         currPos = ToWorld(s.posX, s.posY);
+        ApplyAnimation(s);
         ApplyDiscrete(s);
     }
 
@@ -91,5 +98,46 @@ public class FighterView : MonoBehaviour
         FacingRight = s.facingRight;
         StateId = s.stateId;
         transform.rotation = Quaternion.Euler(0f, s.facingRight ? 0f : 180f, 0f);
+    }
+
+    private void ApplyAnimation(FighterSimState s)
+    {
+        // 直前が同じであれば早期リターン
+        if (s.stateId == StateId) return;
+
+        Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
+
+        int crossFrame = 2;
+
+        switch (s.stateId)
+        {
+            case FighterStateId.Idle:
+                anim.CrossFade("Idle", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.WalkForward:
+                anim.CrossFade("WalkForward", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.WalkBack:
+                anim.CrossFade("WalkBack", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.Jump:
+                anim.CrossFade("Jump", ChangeFrameTime(crossFrame));
+                break;
+
+                
+
+            case FighterStateId.Down:
+            case FighterStateId.KO:
+                anim.CrossFade("Down", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.WakeUp:
+                anim.CrossFade("WakeUp", ChangeFrameTime(crossFrame));
+                break;
+        }
+
     }
 }
