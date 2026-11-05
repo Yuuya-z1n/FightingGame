@@ -3,6 +3,7 @@ using System.Text;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class SaveAttackCustom : MonoBehaviour
 {
@@ -20,6 +21,11 @@ public class SaveAttackCustom : MonoBehaviour
     [Header("Input Actions")]
     [SerializeField] InputActionReference decidebuttonAction;
 
+    private Dictionary<string, AttackData> attackDataDictionary;
+
+    private const string ProjectFolderName = "Fighting Game";
+    private const string CsvFolderName = "Assets/Resources";
+    private const string CsvFileName = "test.csv";
 
     void OnEnable()
     {
@@ -50,6 +56,30 @@ public class SaveAttackCustom : MonoBehaviour
 
         if (specialMove == null)
             Debug.LogError("SpecialCustomが見つかりません。", this);
+
+        attackDataDictionary = AttackDataLoader.LoadAttackDataFromCSV("test");
+
+
+        foreach (string key in attackDataDictionary.Keys)
+        {
+            Debug.Log($"辞書に登録されている攻撃名: [{key}]");
+        }
+    }
+
+
+    private static string GetCsvFilePath()
+    {
+        string desktopPath = System.Environment.GetFolderPath(
+            System.Environment.SpecialFolder.DesktopDirectory
+        );
+
+        return Path.Combine(
+            desktopPath,
+            "卒業研究",
+            ProjectFolderName,
+            CsvFolderName,
+            CsvFileName
+        );
     }
 
     public void SaveData()
@@ -60,34 +90,62 @@ public class SaveAttackCustom : MonoBehaviour
             return;
         }
 
-        // 保存先フォルダを固定
-        string folderpath = Path.Combine(
-            Application.persistentDataPath,
-            "CustomData",
-            "PlayerCustom"
-        );
+        string filePath = GetCsvFilePath();
 
-        Directory.CreateDirectory(folderpath);
+        string folderPath = Path.GetDirectoryName(filePath);
+        Directory.CreateDirectory(folderPath);
 
-        string filePath = Path.Combine(folderpath, filename);
+        // CSVデータを格納する変数
         StringBuilder csv = new StringBuilder();
 
-        csv.AppendLine("攻撃,発生,持続,硬直,ダメージ,ヒットボックスの名前");
+
+
+        //var dictionary = new Dictionary<string, AttackData>();
+        //TextAsset csvFile = Resources.Load<TextAsset>(filePath);
+        //AttackDataLoader.LoadAttackDataFromCSV(csvFile);
+
+        //if(csvFile == null)
+        //{
+        //    Debug.Log("CSVが見当たらない");
+        //    return dictionary;
+        //}
+
+
+        csv.AppendLine("攻撃,発生,持続,硬直,ダメージ,ヒットボックスの名前,判定X,判定Y,判定幅,判定高,ノックバックX,ノックバックY,ヒットストップ,ヒットスタン");
         // 通常技：小・中・大
-        string[] normalNames = { "Light", "Medium", "Heavey"};
+        string[] normalNames = { "Light", "Medium", "Heavy" };
 
-        for (int i = 0; i < 3; i++)
+        int attackCount = attackCustom.GetAttackCount();
+
+        for (int i = 0; i < attackCount; i++)
         {
-            csv.AppendLine(
-                normalNames[i] + "," +
-                attackCustom.GetValue(i, 1) + "," +
-                attackCustom.GetValue(i, 3) + "," +
-                attackCustom.GetValue(i, 2) + "," +
-                attackCustom.GetValue(i, 0) + "," +
-                "Attack_HitBox"
-            );
-        }
+            //Debug.Log(i);
+            if (attackDataDictionary.TryGetValue(normalNames[i], out AttackData data))
+            {
+                Debug.Log($"攻撃データ取得成功: {normalNames[i]}");
 
+                csv.AppendLine(
+                    normalNames[i] + "," +
+                    attackCustom.GetValue(i, 1) + "," +
+                    attackCustom.GetValue(i, 3) + "," +
+                    attackCustom.GetValue(i, 2) + "," +
+                    attackCustom.GetValue(i, 0) + "," +
+                    "Attack_HitBox" + "," +
+                    data.hitboxOffsetX + "," +
+                    data.hitboxOffsetY + "," +
+                    data.hitboxSizeX + "," +
+                    data.hitboxSizeY + "," +
+                    data.knockbackX + "," +
+                    data.knockbackY + "," +
+                    data.hitStop + "," +
+                    data.hitStun
+                );
+            }
+            else
+            {
+                Debug.LogError($"攻撃データ取得失敗: {normalNames[i]}");
+            }
+        }
         // 投げ技の項目
         csv.AppendLine("Throw," +
             "5,"+ "2,"+"23,"+"1200,"+ "Throw_HitBox");
