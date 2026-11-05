@@ -8,6 +8,9 @@ public class AttackCustomManager : MonoBehaviour
     [SerializeField] private GameObject attackPage;
     [SerializeField] private GameObject specialMovePage;
 
+    [SerializeField] private GameObject AttackCustomPanel;
+
+
     [Header("Input Actions")]
     [SerializeField] private InputActionReference prevPageAction; // LT
     [SerializeField] private InputActionReference nextPageAction; // RT
@@ -65,6 +68,7 @@ public class AttackCustomManager : MonoBehaviour
 
     private void Start()
     {
+        AttackCustomPanel.SetActive(false);
         ShowPage(0);
     }
 
@@ -157,5 +161,16 @@ public class AttackCustomManager : MonoBehaviour
     public int GetCurrentPage()
     {
         return CurrentPage;
+    }
+
+    public void OpenAttackCustomPanel()
+    {
+        AttackCustomPanel.SetActive(true);
+    }
+
+    public void CloseAttackCustomPanel()
+    {
+        if (AttackCustomPanel != null)
+            AttackCustomPanel.SetActive(false);
     }
 }
