@@ -103,6 +103,7 @@ namespace FightSim
             if (frozen0) f[0].hitStopFrames--; else StepFighter(ref f[0], in0);
             if (frozen1) f[1].hitStopFrames--; else StepFighter(ref f[1], in1);
 
+            ResolveThrowStates();
             ResolvePush();
             LimitSeparation(prevX0, prevX1);
             ClampStage();
@@ -145,12 +146,39 @@ namespace FightSim
             // 状態の終了判定
             switch (s.stateId)
             {
-                case FighterStateId.Attack:
+                case FighterStateId.LightAttack:
+                case FighterStateId.MediumAttack:
+                case FighterStateId.HeavyAttack:
+                case FighterStateId.SpecialAttack1:
                 case FighterStateId.AirAttack:
                     if (s.attackIndex < 0 || s.stateFrame >= attacks[s.attackIndex].TotalFrames)
                     {
                         EndToNeutral(ref s);
                     }
+                    break;
+
+                case FighterStateId.ThrowAttack:
+                    if (s.attackHasHit) break;
+                    if(s.attackIndex < 0 || s.stateFrame >= attacks[s.attackIndex].TotalFrames)
+                    {
+                        EndToNeutral(ref s);
+                    }
+                    else if (s.stateFrame >= attacks[s.attackIndex].startup + attacks[s.attackIndex].active)
+                    {
+                        // 投げが届かないまま判定が終わった → 投げスカリ（残りの硬直は無防備）
+                        s.stateId = FighterStateId.ThrowMiss;
+                    }
+                    break;
+
+                case FighterStateId.ThrowMiss:
+                    if (s.attackIndex < 0 || s.stateFrame >= attacks[s.attackIndex].TotalFrames)
+                    {
+                        EndToNeutral(ref s);
+                    }
+                    break;
+
+                case FighterStateId.ThrowEsc:
+                    if (s.stateFrame >= p.throwEscFrames) EndToNeutral(ref s);
                     break;
 
                 case FighterStateId.HitStun:
@@ -190,7 +218,9 @@ namespace FightSim
                     TryStartAttack(ref s, true);
                     break;
 
-                case FighterStateId.Attack:
+                case FighterStateId.LightAttack:
+                case FighterStateId.MediumAttack:
+                case FighterStateId.HeavyAttack:
                     // 通常技がヒット/ガードされた後は、必殺技でキャンセルできる
                     TryCancelIntoSpecial(ref s);
                     break;
@@ -205,6 +235,7 @@ namespace FightSim
                 case FighterStateId.KO:
                 case FighterStateId.Down:
                 case FighterStateId.WakeUp:
+                case FighterStateId.ThrowEsc:
                     // 地上ではノックバックの速度を徐々に減らす
                     if (s.Grounded) s.velX = MoveToward(s.velX, 0, p.hitStunGroundFriction);
                     break;
@@ -286,7 +317,7 @@ namespace FightSim
         {
             s.attackIndex = idx;
             s.attackHasHit = false;
-            s.stateId = air ? FighterStateId.AirAttack : FighterStateId.Attack;
+            s.stateId = air ? FighterStateId.AirAttack : GroundAttackState(idx);
             s.stateFrame = 0;
 
             if (!air)
@@ -331,6 +362,70 @@ namespace FightSim
         private static bool IsCrouchAttack(int attackIndex)
         {
             return attackIndex >= (int)AttackType.Crouch_Light && attackIndex <= (int)AttackType.Crouch_Heavy;
+        }
+
+        // 地上攻撃か
+        private static bool IsGroundAttackState(FighterStateId id)
+        {
+            return id == FighterStateId.LightAttack ||
+                   id == FighterStateId.MediumAttack ||
+                   id == FighterStateId.HeavyAttack ||
+                   id == FighterStateId.SpecialAttack1 ||
+                   id == FighterStateId.ThrowAttack;
+        }
+
+        // 攻撃中か
+        private static bool IsAttackState(FighterStateId id)
+        {
+            return IsGroundAttackState(id) || id == FighterStateId.AirAttack;
+        }
+
+        // 地上技の番号から攻撃の状態を決める
+        // 必殺技を増やす場合はここにSpecialAttack2などの分岐を足す。
+        private static FighterStateId GroundAttackState(int attackIndex)
+        {
+            if (IsThrowAttack(attackIndex)) return FighterStateId.ThrowAttack;
+            if (IsSpecialAttack(attackIndex)) return FighterStateId.SpecialAttack1;
+
+            switch (attackIndex % 3)
+            {
+                case 1: return FighterStateId.MediumAttack;
+                case 2: return FighterStateId.HeavyAttack;
+                default: return FighterStateId.LightAttack;
+            }
+
+        }
+
+        // 投げか
+        private static bool IsThrowAttack(int attackIndex)
+        {
+            return attackIndex == (int)AttackType.Throw;
+        }
+
+        // 投げができる状態かどうか
+        private static bool CanBeThrown(FighterSimState s)
+        {
+            if (!s.Grounded) return false;
+
+            switch (s.stateId)
+            {
+                case FighterStateId.Idle:
+                case FighterStateId.WalkForward:
+                case FighterStateId.WalkBack:
+                case FighterStateId.Crouch:
+                case FighterStateId.BlockStun:
+                case FighterStateId.LightAttack:
+                case FighterStateId.MediumAttack:
+                case FighterStateId.HeavyAttack:
+                case FighterStateId.SpecialAttack1:
+                case FighterStateId.ThrowAttack:
+                case FighterStateId.ThrowMiss:
+                    return true;
+
+                default:
+                    return false;
+            }
+
         }
 
         // 通常技の番号（strength: 0 = 弱, 1 = 中, 2 = 強）。
@@ -392,8 +487,9 @@ namespace FightSim
         {
             // ダウン～起き上がり中は常に無敵
             if (s.stateId == FighterStateId.Down || s.stateId == FighterStateId.WakeUp) return true;
-            if (s.stateId != FighterStateId.Attack && s.stateId != FighterStateId.AirAttack) return false;
+            if (!IsAttackState(s.stateId)) return false;
             if (s.attackIndex < 0 || s.attackIndex >= attacks.Length) return false;
+
             return s.stateFrame < attacks[s.attackIndex].invulnFrames;
         }
 
@@ -441,7 +537,7 @@ namespace FightSim
 
             // 技のデータで指定されていれば、最高到達点で横移動を止めて、垂直に落ちる（昇竜など）
             if (wasAirborne && s.velY <= 0 &&
-                s.stateId == FighterStateId.Attack &&
+                IsGroundAttackState(s.stateId) &&
                 s.attackIndex >= 0 && s.attackIndex < attacks.Length &&
                 attacks[s.attackIndex].stopXAtApex)
             {
@@ -477,7 +573,11 @@ namespace FightSim
                     s.stateFrame = 0;
                     break;
 
-                case FighterStateId.Attack:
+                case FighterStateId.LightAttack:
+                case FighterStateId.MediumAttack:
+                case FighterStateId.HeavyAttack:
+                case FighterStateId.SpecialAttack1:
+                case FighterStateId.ThrowAttack:
                     // 昇竜など、地上技で空中に出た技。着地で横移動は止まるが、技のフレームは続く
                     s.velX = 0;
                     break;
@@ -505,7 +605,7 @@ namespace FightSim
                    s.stateId == FighterStateId.Down ||
                    s.stateId == FighterStateId.WakeUp ||
                    (s.stateId == FighterStateId.BlockStun && s.guardCrouch) ||
-                   (s.stateId == FighterStateId.Attack && IsCrouchAttack(s.attackIndex));
+                   (IsGroundAttackState(s.stateId) && IsCrouchAttack(s.attackIndex));
         }
 
         private static bool IsStunned(FighterSimState s)
@@ -667,7 +767,7 @@ namespace FightSim
             rect = new SimRect();
             FighterSimState s = f[i];
 
-            if (s.stateId != FighterStateId.Attack && s.stateId != FighterStateId.AirAttack) return false;
+            if (!IsAttackState(s.stateId)) return false;
             if (s.attackIndex < 0 || s.attackHasHit) return false;
 
             AttackFrameData atk = attacks[s.attackIndex];
@@ -704,7 +804,9 @@ namespace FightSim
             log.defenderState = f[defender].stateId;
             lastCheck[attacker] = log;
 
-            return overlap && !invulnerable;
+            bool throwable = !IsThrowAttack(f[attacker].attackIndex) || CanBeThrown(f[defender]);
+
+            return overlap && !invulnerable && throwable;
         }
 
         private void ResolveHits()
@@ -713,6 +815,21 @@ namespace FightSim
             bool hit0 = CheckHit(0, 1);
             bool hit1 = CheckHit(1, 0);
             if (!hit0 && !hit1) return;
+
+            bool throw0 = hit0 && IsThrowAttack(f[0].attackIndex);
+            bool throw1 = hit1 && IsThrowAttack(f[1].attackIndex);
+            if(throw0 && throw1)
+            {
+                // 両者が投げた場合投げ抜け成立
+                BeginThrowEsc();
+                return;
+            }
+
+            if( throw0 && hit1) { hit0 = false; throw0 = false; }
+            if( throw1 && hit0) { hit1 = false; throw1 = false; }
+
+            if (throw0) { BeginGrab(0, 1); return; }
+            if (throw1) { BeginGrab(1, 0); return; }
 
             AttackFrameData atk0 = hit0 ? attacks[f[0].attackIndex] : new AttackFrameData();
             AttackFrameData atk1 = hit1 ? attacks[f[1].attackIndex] : new AttackFrameData();
@@ -829,6 +946,98 @@ namespace FightSim
         public HitCheckLog GetLastCheck(int attacker)
         {
             return lastCheck[attacker];
+        }
+
+        // 投げはじめ
+        private void BeginGrab(int attacker, int defender)
+        {
+            f[attacker].attackHasHit = true;
+            f[attacker].stateId = FighterStateId.ThrowAttack;
+            f[attacker].stateFrame = 0;
+            f[attacker].hitStopFrames = 0;
+            f[attacker].velX = 0;
+            f[attacker].velY = 0;
+
+            f[defender].attackIndex = -1;
+            f[defender].attackHasHit = false;
+            f[defender].guardCrouch = false;
+            f[defender].stateId = FighterStateId.Thrown;
+            f[defender].stateFrame = 0;
+            f[defender].hitStopFrames = 0;
+            f[defender].velX = 0;
+            f[defender].velY = 0;
+            f[defender].bufThrow = 0;
+        }
+
+        // 投げ抜け成立
+        private void BeginThrowEsc()
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                int other = 1 - i;
+                int away;
+                if (f[i].posX > f[other].posX) away = 1;
+                else if (f[i].posX < f[other].posX) away = -1;
+                else away = f[i].facingRight ? -1 : 1;
+
+                f[i].attackIndex = -1;
+                f[i].attackHasHit = false;
+                f[i].guardCrouch = false;
+                f[i].stateId = FighterStateId.ThrowEsc;
+                f[i].stateFrame = 0;
+                f[i].hitStopFrames = 0;
+                f[i].velX = away * p.throwEscPushSpeed;
+                f[i].velY = 0;
+                f[i].bufThrow = 0;
+            }
+        }
+
+        // 投げ中
+        private void ResolveThrowStates()
+        {
+            for (int d = 0; d < 2; d++)
+            {
+                if (f[d].stateId != FighterStateId.Thrown) continue;
+
+                int a = 1 - d;
+
+                if (f[a].stateId != FighterStateId.ThrowAttack || !f[a].attackHasHit) continue;
+
+                if (f[d].bufThrow > 0) BeginThrowEsc();
+                else if (f[d].stateFrame >= p.throwTechFrames) FinishThrow(a, d);
+
+                return;
+            }
+        }
+
+        // 投げ成立
+        private void FinishThrow(int attacker, int defender)
+        {
+            AttackFrameData atk = attacks[f[attacker].attackIndex];
+            bool knockBackToRight = f[attacker].facingRight;
+
+            RecordHit(defender, false, GuardResult.FailUnblockable, f[attacker].attackIndex);
+
+            // 後ろ投げ: 成立の瞬間に後ろが入っていれば、位置を入れ替えて、相手を背中側へ飛ばす
+            if (IsBackInput(f[attacker]))
+            {
+                int tmp = f[attacker].posX;
+                f[attacker].posX = f[defender].posX;
+                f[defender].posX = tmp;
+                knockBackToRight = !knockBackToRight;
+            }
+
+            EndToNeutral(ref f[attacker]);
+            f[attacker].hitStopFrames = Math.Max(f[attacker].hitStopFrames, atk.hitStop);
+
+            ApplyHitToDefender(ref f[defender], atk, knockBackToRight);
+        }
+
+        // 後ろ入力が入っているかどうか
+        private static bool IsBackInput(FighterSimState s)
+        {
+            int numpad = (int)(s.dirHistory & 0xF);
+            return numpad == 1 || numpad == 4 || numpad == 7;
         }
 
         private void ApplyHitToDefender(ref FighterSimState d, AttackFrameData atk, bool attackerFacingRight)

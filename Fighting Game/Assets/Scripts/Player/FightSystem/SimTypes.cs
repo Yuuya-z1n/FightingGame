@@ -103,7 +103,6 @@ namespace FightSim
         Step,
         Crouch,         // しゃがみ
         Jump,
-        Attack,         // (あとで差し替え)
         LightAttack,     // 弱攻撃
         MediumAttack,   // 中攻撃
         HeavyAttack,    // 強攻撃
@@ -114,6 +113,7 @@ namespace FightSim
         ThrowAttack,    // 投げ
         ThrowMiss,      // 投げスカリ
         ThrowEsc,       // 投げ抜け
+        Thrown,         // 投げられ中
         AirAttack,  // 空中攻撃
         HitStun,    // 食らい硬直
         AirHit,     // 空中食らい
@@ -144,17 +144,20 @@ namespace FightSim
         public int maxHealth = 10000;
         public bool chipCanKill = true;      // 削りダメージで KO になるか
 
-        // ---- 移動（sim単位/フレーム。83 ≒ 5.0 ワールド単位/秒）----
+        // ---- 移動 ----
         public int walkForwardSpeed = 83;
         public int walkBackSpeed = 75;
-        public int jumpSpeed = 150;          // ジャンプ初速（150 ≒ 9.0/秒）
+        public int jumpSpeed = 150;
         public int jumpForwardSpeed = 83;
         public int jumpBackSpeed = 75;
-        public int gravity = 7;              // sim単位/フレーム²（7 ≒ 25/秒²）
+        public int gravity = 7;
         public int hitStunGroundFriction = 2; // 食らい・ガード硬直中、地上でのノックバックの減速
-        public int downFrame = 40;            // ダウン中のフレーム数（起き上がりまでの時間）
+        public int downFrame = 40;            // ダウン中のフレーム数
         public int wakeUpFrame = 20;            // 起き上がりのフレーム数
 
+        public int throwTechFrames = 4;      // 掴まれてから投げ抜けできるフレーム数
+        public int throwEscFrames = 30;       // 投げ抜け後、両者が動けない時間
+        public int throwEscPushSpeed = 40;    // 投げ抜け時に離れる初速（sim単位/フレーム）
 
         // ---- 入力 ----
         public int inputBufferFrames = 6;    // 先行入力の受付フレーム数

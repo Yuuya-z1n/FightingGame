@@ -127,7 +127,10 @@ public class FighterView : MonoBehaviour
                 anim.CrossFade("Jump", ChangeFrameTime(crossFrame));
                 break;
 
-                
+            case FighterStateId.SpecialAttack1:
+                anim.CrossFade("Test", ChangeFrameTime(crossFrame));
+                Debug.Log("昇竜拳！");
+                break;
 
             case FighterStateId.Down:
             case FighterStateId.KO:
