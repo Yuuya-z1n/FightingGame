@@ -33,7 +33,9 @@ public class AttackCustom : MonoBehaviour
 
         public ButtonRow GetRow(int i) => i == 0 ? damage : i == 1 ? startup : recovery;
     }
-    
+
+
+
     static readonly string[] RowNames = { "ダメージ", "発生", "硬直" };
 
     [Header("0=小 / 1=中 / 2=大")]
@@ -72,8 +74,8 @@ public class AttackCustom : MonoBehaviour
     [SerializeField] GameObject[] hideObjects;
     
     [SerializeField] private Color selectedColor = Color.red;
-
-void Awake()
+    
+    void Awake()
     {
         if (!enableKeyboard) return;
         
@@ -122,6 +124,8 @@ void Awake()
 
     void Start()
     {
+        //AttackCustomPanel.SetActive(false);
+
         // 最初は小攻撃を選択
         attackIndex = 0;
 
@@ -130,6 +134,12 @@ void Awake()
 
         RefreshColors();
         SelectCurrentButton();
+
+    }
+
+    public int GetAttackCount()
+    {
+        return attacks == null ? 0 : attacks.Length;
     }
 
     void Update()
