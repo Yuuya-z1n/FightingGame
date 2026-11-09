@@ -93,10 +93,10 @@ public class PlayerInputHandler : MonoBehaviour
 
         moveInput = move;
 
-        if (lightAttack) OnAttackPressed?.Invoke(AttackType.Light);
-        if (mediumAttack) OnAttackPressed?.Invoke(AttackType.Medium);
-        if (heavyAttack) OnAttackPressed?.Invoke(AttackType.Heavy);
-        if (throwAttack) OnAttackPressed?.Invoke(AttackType.Throw);
+        if (lightAttack) OnAttackPressed?.Invoke(AttackType. Stand_Light);
+        if (mediumAttack) OnAttackPressed?.Invoke(AttackType.Stand_Medium);
+        if (heavyAttack) OnAttackPressed?.Invoke(AttackType. Stand_Heavy);
+        if (throwAttack) OnAttackPressed?.Invoke(AttackType. Throw);
     }
 
     private void OnEnable()

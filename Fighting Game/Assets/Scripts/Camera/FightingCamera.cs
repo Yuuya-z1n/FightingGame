@@ -45,6 +45,7 @@ public class FightingCamera : MonoBehaviour
     [SerializeField] private Transform minusWall;
     [SerializeField] private Transform plusWall;
 
+
     public bool IsReady => initialized;
     public float VisibleMinX => transform.position.x - VisibleHalfWidth();
     public float VisibleMaxX => transform.position.x + VisibleHalfWidth();
@@ -52,7 +53,7 @@ public class FightingCamera : MonoBehaviour
     private class Tracked
     {
         public Transform trans;
-        public PlayerMovement move;
+        public FighterView view;
         public float groundY; // 最後に接地していた時の Y
     }
 
@@ -89,7 +90,7 @@ public class FightingCamera : MonoBehaviour
         return new Tracked
         {
             trans = t,
-            move = t.GetComponent<PlayerMovement>(),
+            view = t.GetComponent<FighterView>(),
             groundY = t.position.y
         };
     }
@@ -137,7 +138,7 @@ public class FightingCamera : MonoBehaviour
     // 接地中だけ「地面の高さ」を更新する。ジャンプの高さ = 現在Y - 地面Y
     private void UpdateGroundY(Tracked t)
     {
-        if (t.move != null && t.move.IsGrounded)
+        if (t.view != null && t.view.IsGrounded)
         {
             t.groundY = t.trans.position.y;
         }

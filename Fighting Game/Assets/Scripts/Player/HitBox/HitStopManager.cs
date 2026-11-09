@@ -38,4 +38,5 @@ public class HitStopManager : MonoBehaviour
 
         isHitStopping = false;
     }
+
 }

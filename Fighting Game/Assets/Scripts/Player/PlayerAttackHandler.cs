@@ -137,4 +137,20 @@ public class PlayerAttackHandler : MonoBehaviour
         SetHitBoxEnabled(throwHitBox, false);
     }
 
+    // 被弾時のキャンセル(カウンターなど)
+    public void CancelAttack()
+    {
+        if (attackCoroutine != null)
+        {
+            StopCoroutine(attackCoroutine);
+            attackCoroutine = null;
+        }
+        DisableAllHitBoxes();
+        isAttacking = false;
+        if (movement != null) movement.isCanMove = true;
+        if (facingHandler != null) facingHandler.canTurn = true;
+
+        Debug.Log("カウンターヒットで攻撃をキャンセルされた");
+    }
+
 }

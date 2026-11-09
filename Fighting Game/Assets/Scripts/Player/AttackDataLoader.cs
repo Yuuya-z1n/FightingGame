@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
@@ -30,22 +29,33 @@ public static class AttackDataLoader
 
             AttackData data = new AttackData
             {
-                attackID = v[0].Trim(),
-                startup = ParseInt(v, 1, row),
-                active = ParseInt(v, 2, row),
-                recovery = ParseInt(v, 3, row),
-                damage = ParseInt(v, 4, row),
-                hitBoxName = v[5].Trim(),
+                attackID = v[0].Trim(),                              // 攻撃
+                startup = ParseInt(v, 1, row),                       // 発生
+                active = ParseInt(v, 2, row),                        // 持続
+                recovery = ParseInt(v, 3, row),                      // 硬直
+                damage = ParseInt(v, 4, row),                        // ダメージ
+                hitBoxName = v[5].Trim(),                            // ヒットボックスの名前
 
-                hitboxOffsetX = ParseFloat(v, 6, row),
-                hitboxOffsetY = ParseFloat(v, 7, row),
-                hitboxSizeX = ParseFloat(v, 8, row),
-                hitboxSizeY = ParseFloat(v, 9, row),
+                hitboxOffsetX = ParseFloat(v, 6, row),               // 判定X
+                hitboxOffsetY = ParseFloat(v, 7, row),               // 判定Y
+                hitboxSizeX = ParseFloat(v, 8, row),                 // 判定幅
+                hitboxSizeY = ParseFloat(v, 9, row),                 // 判定高
 
-                knockbackX = ParseFloat(v, 10, row),
-                knockbackY = ParseFloat(v, 11, row),
-                hitStop = ParseInt(v, 12, row),
-                hitStun = ParseInt(v, 13, row)
+                knockbackX = ParseFloat(v, 10, row),                 // ノックバックX
+                knockbackY = ParseFloat(v, 11, row),                 // ノックバックY
+                hitStop = ParseInt(v, 12, row),                      // ヒットストップ（フレーム。ヒット・ガード共通）
+                hitStun = ParseInt(v, 13, row),                      // ヒットスタン（フレーム）
+
+                guardType = v.Length > 14 ? v[14].Trim() : "",       // ガード種別（High=上段 / Low=下段 / Throw=ガード不能）
+                blockStun = ParseInt(v, 15, row),                    // ガード硬直（フレーム）
+                blockKnockbackX = ParseFloat(v, 16, row),            // ガード時の押し戻し（ノックバックと同じ単位）
+                chipDamage = ParseInt(v, 17, row),                   // 削りダメージ（必殺技のみ値を入れる。通常技は 0）
+
+                startVelX = ParseFloat(v, 18, row),                  // 技の開始時の横速度
+                startVelY = ParseFloat(v, 19, row),                  // 技の開始時の上方向の速度
+                invulnFrames = ParseInt(v, 20, row),                 // 技の開始から無敵になるフレーム数
+                stopXAtApex = ParseInt(v, 21, row),                  // 昇竜など、最高到達点に至った時に垂直落下するかどうか
+                knockDownCombo = ParseInt(v, 22, row)                // 相手へのヒット数カウント。この値以上になるとダウン(0はダウンしない)   
             };
 
             dictionary[data.attackID] = data;
