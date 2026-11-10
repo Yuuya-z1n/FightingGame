@@ -100,7 +100,8 @@ namespace FightSim
         Idle,
         WalkForward,
         WalkBack,
-        Step,
+        ForwardStep,
+        BackStep,
         Crouch,         // しゃがみ
         Jump,
         LightAttack,     // 弱攻撃
@@ -158,6 +159,12 @@ namespace FightSim
         public int throwTechFrames = 4;      // 掴まれてから投げ抜けできるフレーム数
         public int throwEscFrames = 30;       // 投げ抜け後、両者が動けない時間
         public int throwEscPushSpeed = 40;    // 投げ抜け時に離れる初速（sim単位/フレーム）
+
+        public int stepInputFrames = 12;      // ステップの入力受付
+        public int forwardStepSpeed = 130;    // 前ステップの速度
+        public int forwardStepFrames = 16;    // 前ステップの長さ
+        public int backStepSpeed = 110;       // 後ろステップの速度
+        public int backStepFrames = 16;       // 後ろステップの長さ
 
         // ---- 入力 ----
         public int inputBufferFrames = 6;    // 先行入力の受付フレーム数
