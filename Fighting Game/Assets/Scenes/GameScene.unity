@@ -1674,9 +1674,9 @@ MonoBehaviour:
     hitStunGroundFriction: 2
     downFrame: 40
     wakeUpFrame: 35
-    throwTechFrames: 4
+    throwTechFrames: 6
     throwEscFrames: 30
-    throwEscPushSpeed: 40
+    throwEscPushSpeed: 120
     inputBufferFrames: 6
     allowSpecialCancel: 1
     specialBindings:

@@ -72,7 +72,7 @@ public class FightManager : MonoBehaviour
     private AttackFrameData[] LoadAttackTable()
     {
         var table = new AttackFrameData[Enum.GetValues(typeof(AttackType)).Length];
-        var db = AttackDataLoader.LoadAttackDataFromCSV(csvResourceName);
+        var db = AttackDataLoader.LoadAttackDataFromCSV("Player/" + csvResourceName);
 
         foreach (AttackType type in Enum.GetValues(typeof(AttackType)))
         {
@@ -135,7 +135,7 @@ public class FightManager : MonoBehaviour
         if (view2 != null) view2.Snap(sim.Get(1));
     }
 
-    // ---- 判定ボックスの可視化（Scene ビュー。Game ビューは Gizmos を有効にすると表示）----
+    // ---- 判定ボックスの可視化 ----
     private void OnDrawGizmos()
     {
         if (!showBoxes || sim == null || view1 == null || view2 == null) return;

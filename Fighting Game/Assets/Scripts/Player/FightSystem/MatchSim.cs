@@ -165,7 +165,7 @@ namespace FightSim
                     }
                     else if (s.stateFrame >= attacks[s.attackIndex].startup + attacks[s.attackIndex].active)
                     {
-                        // 投げが届かないまま判定が終わった → 投げスカリ（残りの硬直は無防備）
+                        // 投げが届かないまま判定が終わった → 投げスカリ
                         s.stateId = FighterStateId.ThrowMiss;
                     }
                     break;
@@ -179,6 +179,14 @@ namespace FightSim
 
                 case FighterStateId.ThrowEsc:
                     if (s.stateFrame >= p.throwEscFrames) EndToNeutral(ref s);
+                    break;
+
+                case FighterStateId.ForwardStep:
+                    if (s.stateFrame >= p.forwardStepFrames) EndToNeutral(ref s);
+                    break;
+
+                case FighterStateId.BackStep:
+                    if (s.stateFrame >= p.backStepFrames) EndToNeutral(ref s);
                     break;
 
                 case FighterStateId.HitStun:
@@ -266,6 +274,8 @@ namespace FightSim
                 return;
             }
 
+            if (s.stateId != FighterStateId.Crouch && TryStartStep(ref s)) return;
+
             if (dx == 0)
             {
                 SetState(ref s, FighterStateId.Idle);
@@ -276,6 +286,33 @@ namespace FightSim
             bool forward = (dx > 0) == s.facingRight;
             SetState(ref s, forward ? FighterStateId.WalkForward : FighterStateId.WalkBack);
             s.velX = dx * (forward ? p.walkForwardSpeed : p.walkBackSpeed);
+        }
+
+        // 前後どちらか2回の入力でステップ開始
+        private bool TryStartStep(ref FighterSimState s)
+        {
+            bool forward;
+            int forwardKey = 6, backKey = 4;
+            if (IsDoubleTap(s.dirHistory, forwardKey, p.stepInputFrames)) forward = true;
+            else if (IsDoubleTap(s.dirHistory, backKey, p.stepInputFrames)) forward = false;
+            else return false;
+
+            SetState(ref s, forward ? FighterStateId.ForwardStep : FighterStateId.BackStep);
+            int dir = (forward == s.facingRight) ? 1 : -1;
+            s.velX = dir * (forward ? p.forwardStepSpeed : p.backStepSpeed);
+            return true;
+        }
+
+        private static bool IsDoubleTap(ulong history, int direction, int window)
+        {
+            if (window > 15) window = 15;   // 履歴は 16 フレーム分
+            if ((int)(history & 0xF) != direction) return false;
+
+            int k = 1;
+            while (k <= window && (int)((history >> (4 * k)) & 0xF) == 5) k++;
+            if (k == 1) return false;       // 直前がニュートラルではない
+
+            return k <= window && (int)((history >> (4 * k)) & 0xF) == direction;
         }
 
         // 先行入力された攻撃ボタンがあれば、攻撃を開始する
@@ -293,7 +330,7 @@ namespace FightSim
                 }
             }
 
-            // 空中攻撃はすべて同じ技(弱中強で違いがない)　投げはしない
+            // 空中攻撃はすべて同じ技
             if (air) return TryStartAirAttack(ref s);
 
             // 地上で下を押している間は、しゃがみ版の通常技（空中では立ち版のデータを使う）
@@ -413,6 +450,7 @@ namespace FightSim
                 case FighterStateId.WalkForward:
                 case FighterStateId.WalkBack:
                 case FighterStateId.Crouch:
+                case FighterStateId.ForwardStep:
                 case FighterStateId.BlockStun:
                 case FighterStateId.LightAttack:
                 case FighterStateId.MediumAttack:
@@ -884,7 +922,7 @@ namespace FightSim
             lastHit[defender] = log;
         }
 
-        // ジャンプ攻撃は、CSV の指定に関係なく上段扱い（ガード不能の技は除く）
+        // ジャンプ攻撃は、CSV の指定に関係なく上段扱い
         private GuardType EffectiveLevel(int attacker, AttackFrameData atk)
         {
             if (atk.guardType == GuardType.Unblockable) return GuardType.Unblockable;
@@ -892,9 +930,9 @@ namespace FightSim
         }
 
         // defender が、attacker から level の攻撃を受けた時にガードできるか。失敗の場合は理由を返す
-        //   ・ガードできるのは、地上の動ける状態（またはガード硬直中）で、相手から離れる方向を入力している時
-        //   ・上段は立ちガード、下段はしゃがみガードでのみ防げる
-        //   ・投げ（ガード不能）は防げない
+        //   地上の動ける状態で、相手から離れる方向を入力している時のみ
+        //   上段は立ちガード、下段はしゃがみガードでのみ防げる
+        //   投げは防げない
         private GuardResult EvaluateGuard(int attacker, int defender, GuardType level)
         {
             if (level == GuardType.Unblockable) return GuardResult.FailUnblockable;
@@ -930,19 +968,18 @@ namespace FightSim
 
         // ---- デバッグ表示用 ----
 
-        // 「今この入力で、相手から level の攻撃を受けたらガードできるか」
         public GuardResult PreviewGuard(int defender, GuardType level)
         {
             return EvaluateGuard(1 - defender, defender, level);
         }
 
-        // 防御側 defender の、直近のヒット結果
+        // 防御側の直近のヒット結果
         public HitLog GetLastHit(int defender)
         {
             return lastHit[defender];
         }
 
-        // 攻撃側 attacker の、直近の判定チェック（判定が出ていたフレームの矩形と、重なったか）
+        // 攻撃側の直近の判定チェック
         public HitCheckLog GetLastCheck(int attacker)
         {
             return lastCheck[attacker];
@@ -951,6 +988,12 @@ namespace FightSim
         // 投げはじめ
         private void BeginGrab(int attacker, int defender)
         {
+            if (f[defender].stateId == FighterStateId.ThrowAttack)
+            {
+                BeginThrowEsc();
+                return;
+            }
+
             f[attacker].attackHasHit = true;
             f[attacker].stateId = FighterStateId.ThrowAttack;
             f[attacker].stateFrame = 0;
@@ -1018,7 +1061,7 @@ namespace FightSim
 
             RecordHit(defender, false, GuardResult.FailUnblockable, f[attacker].attackIndex);
 
-            // 後ろ投げ: 成立の瞬間に後ろが入っていれば、位置を入れ替えて、相手を背中側へ飛ばす
+            // 成立の瞬間に後ろが入っていれば位置入れ替え
             if (IsBackInput(f[attacker]))
             {
                 int tmp = f[attacker].posX;
@@ -1042,6 +1085,9 @@ namespace FightSim
 
         private void ApplyHitToDefender(ref FighterSimState d, AttackFrameData atk, bool attackerFacingRight)
         {
+            // 被弾時、空中にいたか
+            bool hitInAir = !d.Grounded;
+
             d.health -= atk.damage;
             if (d.health < 0) d.health = 0;
 
@@ -1060,6 +1106,8 @@ namespace FightSim
             d.comboCount++;
             if (atk.knockDownCombo > 0 && d.comboCount >= atk.knockDownCombo) d.knockdown = true;
 
+            if (hitInAir) d.knockdown = true;
+
             d.stateId = (d.health <= 0) ? FighterStateId.KO : FighterStateId.HitStun;
             d.stateFrame = 0;
 
@@ -1069,14 +1117,14 @@ namespace FightSim
             }
             else if (d.knockdown && d.Grounded)
             {
-                d.knockdown = false;           // 浮かない被弾（knockbackY が 0 以下）は、その場でダウン
+                d.knockdown = false;
                 d.stateId = FighterStateId.Down;
             }
         }
 
         private void ApplyBlockToDefender(ref FighterSimState d, AttackFrameData atk, bool attackerFacingRight, bool crouching)
         {
-            // 削りダメージ（CSV の chipDamage。必殺技のみ値を入れる）
+            // 削りダメージ
             int chip = atk.chipDamage;
             if (chip < 0) chip = 0;
             if (!p.chipCanKill && chip >= d.health) chip = d.health - 1;
