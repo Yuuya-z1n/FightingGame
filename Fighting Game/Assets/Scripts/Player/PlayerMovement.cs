@@ -3,7 +3,8 @@
 public class PlayerMovement : MonoBehaviour
 {
     [Header("移動関連のパラメータ")]
-    [SerializeField] private float moveSpeed = 5.0f;
+    [SerializeField] public float moveSpeed = 5.0f;
+    [SerializeField] public float backMoveSpeed = 4.5f;
     [SerializeField] private float jumpForce = 9.0f;
     [SerializeField] private float jumpForwardSpeed = 5.0f;
     [SerializeField] private float jumpBackSpeed = 4.5f;
@@ -22,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
     private PlayerFacingHandler facingHandler;
     private Rigidbody rb;
 
+    private Animator anim;
+
     private bool isGrounded;
     private bool wasGrounded;
     private float jumpCurrentXVelocity = 0f; // 空中で維持する横速度
@@ -34,10 +37,14 @@ public class PlayerMovement : MonoBehaviour
         inputHandler = GetComponent<PlayerInputHandler>();
         facingHandler = GetComponent<PlayerFacingHandler>();
         rb = GetComponent<Rigidbody>();
+        anim = GetComponentInChildren<Animator>();
 
         if (inputHandler == null) Debug.LogError("PlayerInputHandler が見つかりません");
         if (facingHandler == null) Debug.LogError("PlayerFacingHandler が見つかりません");
         if (rb == null) { Debug.LogError("Rigidbodyが見つかりません"); return; }
+        if (groundCheck == null) Debug.LogError($"{name}: groundCheck が未設定です");
+        if (groundLayer.value == 0) Debug.LogError($"{name}: groundLayer が未設定です");
+        if (anim == null) Debug.Log("Animator が見つかりません");
 
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
@@ -135,5 +142,20 @@ public class PlayerMovement : MonoBehaviour
     {
         jumpCurrentXVelocity = 0.0f;
         Debug.Log("着地した");
+    }
+
+    public string DebugGroundInfo()
+    {
+        if (groundCheck == null) return "groundCheck=null";
+        var sb = new System.Text.StringBuilder();
+        sb.Append($"groundCheck='{groundCheck.name}' pos={groundCheck.position} radius={groundRadius} mask={groundLayer.value} ");
+        var hits = Physics.OverlapSphere(groundCheck.position, groundRadius, ~0, QueryTriggerInteraction.Collide);
+        sb.Append($"重なっているコライダー({hits.Length}): ");
+        foreach (var h in hits)
+        {
+            bool match = (groundLayer.value & (1 << h.gameObject.layer)) != 0;
+            sb.Append($"[{h.name} layer={LayerMask.LayerToName(h.gameObject.layer)} trigger={h.isTrigger} 判定対象={match}] ");
+        }
+        return sb.ToString();
     }
 }
