@@ -80,7 +80,7 @@ public class AudioManager : MonoBehaviour
         RegisterSeCategory(SeCategory.System, systemSeList);
         RegisterSeCategory(SeCategory.Menu, menuSeList);
 
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void RegisterSeCategory(SeCategory category, List<Sound> list)

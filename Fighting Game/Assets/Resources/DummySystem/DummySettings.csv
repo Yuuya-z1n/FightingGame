@@ -1,4 +1,4 @@
 ﻿Setting,Value
-HitType,Normal
-GuardType,NoGuard
+HitType,Counter
+GuardType,Guard
 ThrowEscapeEnabled,true
