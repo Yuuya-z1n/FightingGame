@@ -9,7 +9,7 @@ public static class AttackDataLoader
     public static Dictionary<string, AttackData> LoadAttackDataFromCSV(string resourcePath)
     {
         var dictionary = new Dictionary<string, AttackData>();
-        TextAsset csvFile = Resources.Load<TextAsset>(resourcePath);
+        TextAsset csvFile = Resources.Load<TextAsset>("Player/" + resourcePath);
 
         if (csvFile == null)
         {

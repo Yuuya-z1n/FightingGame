@@ -15,7 +15,7 @@ public class FightManager : MonoBehaviour
     [SerializeField] private FighterView view1;
     [SerializeField] private FighterView view2;
 
-    [Header("攻撃データ（Resources 内の CSV 名）")]
+    [Header("攻撃データ StreemingAssets内のcsv")]
     [SerializeField] private string csvResourceName = "test";
 
     [Header("シミュレーション設定（位置の単位: 1000 = 1ワールド単位）")]
@@ -72,7 +72,7 @@ public class FightManager : MonoBehaviour
     private AttackFrameData[] LoadAttackTable()
     {
         var table = new AttackFrameData[Enum.GetValues(typeof(AttackType)).Length];
-        var db = AttackDataLoader.LoadAttackDataFromCSV("Player/" + csvResourceName);
+        var db = AttackDataLoader.LoadAttackDataFromCSV(csvResourceName);
 
         foreach (AttackType type in Enum.GetValues(typeof(AttackType)))
         {

@@ -107,7 +107,7 @@ public class FighterView : MonoBehaviour
 
         Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
 
-        int crossFrame = 2;
+        int crossFrame = 3;
 
         switch (s.stateId)
         {
@@ -124,7 +124,7 @@ public class FighterView : MonoBehaviour
                 break;
 
             case FighterStateId.Jump:
-                anim.CrossFade("Jump", ChangeFrameTime(crossFrame));
+                anim.CrossFade("BackJump", ChangeFrameTime(crossFrame));
                 break;
 
             case FighterStateId.SpecialAttack1:
@@ -143,6 +143,14 @@ public class FighterView : MonoBehaviour
 
             case FighterStateId.WakeUp:
                 anim.CrossFade("WakeUp", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.ThrowAttack:
+                anim.CrossFade("Throw", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.Thrown:
+                anim.CrossFade("Throw_Uke", ChangeFrameTime(crossFrame));
                 break;
         }
 
