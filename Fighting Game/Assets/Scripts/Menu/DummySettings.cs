@@ -64,6 +64,11 @@ public class DummySettings : MonoBehaviour , IChildMenu
 
     private int lastToggleChangeFrame = -1;
 
+    [Header("選択色")]
+    [SerializeField] private Color NormalColor = Color.white;
+    [SerializeField] private Color SelectedColor = Color.yellow;
+
+
     private const string ProjectFolderName = "Fighting Game";
     private const string CsvFolderName = "Assets/Resources/DummySystem";
     private const string CsvFileName = "DummySettings.csv";
@@ -191,10 +196,6 @@ public class DummySettings : MonoBehaviour , IChildMenu
             SelectCurrentItem();
         }
     }
-
-
-    private static readonly Color SelectedColor = new Color(0.05f, 0.35f, 0.85f);
-    private static readonly Color NormalColor = new Color(0.18f, 0.18f, 0.18f);
 
     private void RefreshSelection()
     {
