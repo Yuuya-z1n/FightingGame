@@ -24,7 +24,7 @@ public class SaveAttackCustom : MonoBehaviour
     private Dictionary<string, AttackData> attackDataDictionary;
 
     private const string ProjectFolderName = "Fighting Game";
-    private const string CsvFolderName = "Assets/Resources";
+    private const string CsvFolderName = "Assets/Resources/Player/";
     private const string CsvFileName = "test.csv";
 
     void OnEnable()
@@ -57,8 +57,7 @@ public class SaveAttackCustom : MonoBehaviour
         if (specialMove == null)
             Debug.LogError("SpecialCustomが見つかりません。", this);
 
-        attackDataDictionary = AttackDataLoader.LoadAttackDataFromCSV("test");
-
+        attackDataDictionary = AttackDataLoader.LoadAttackDataFromCSV(GetCsvFilePath());
 
         foreach (string key in attackDataDictionary.Keys)
         {

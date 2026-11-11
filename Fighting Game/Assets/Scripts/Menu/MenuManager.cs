@@ -36,6 +36,7 @@ public class MenuManager : MonoBehaviour
         Enable(menuAction);
         Enable(selectAction);
         Enable(decideAction);
+        Enable(backAction);
     }
 
     void OnDisable()
@@ -43,6 +44,7 @@ public class MenuManager : MonoBehaviour
         Disable(menuAction);
         Disable(selectAction);
         Disable(decideAction);
+        Disable(backAction);
     }
 
     static void Enable(InputActionReference r)
