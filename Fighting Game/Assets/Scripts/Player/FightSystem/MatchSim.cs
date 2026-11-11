@@ -882,7 +882,7 @@ namespace FightSim
             bool crouchGuard0 = InputUtil.Vertical(f[1].prevButtons) < 0; // 1P の攻撃を 2P がガードする時の姿勢
             bool crouchGuard1 = InputUtil.Vertical(f[0].prevButtons) < 0;
 
-            // 攻撃側: ヒットでもガードでも、当たった扱い（多段防止・ヒットストップ）
+            // ヒットでもガードでも当たった扱い
             if (hit0)
             {
                 f[0].attackHasHit = true;
@@ -894,7 +894,7 @@ namespace FightSim
                 f[1].hitStopFrames = Math.Max(f[1].hitStopFrames, atk1.hitStop);
             }
 
-            // デバッグ用に、ヒット結果を記録しておく（攻撃側の技の番号は適用前の値）
+            // デバッグ用ヒット結果
             if (hit0) RecordHit(1, blocked0, guard0, f[0].attackIndex);
             if (hit1) RecordHit(0, blocked1, guard1, f[1].attackIndex);
 
@@ -922,7 +922,7 @@ namespace FightSim
             lastHit[defender] = log;
         }
 
-        // ジャンプ攻撃は、CSV の指定に関係なく上段扱い
+        // ジャンプ攻撃はCSVの指定に関係なく上段扱い
         private GuardType EffectiveLevel(int attacker, AttackFrameData atk)
         {
             if (atk.guardType == GuardType.Unblockable) return GuardType.Unblockable;
