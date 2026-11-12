@@ -216,12 +216,26 @@ public class AttackCustom : MonoBehaviour
     void SelectCurrentButton()
     {
         var row = CurrentRow;
-        if (row == null || row.buttons == null || row.buttons.Length == 0) return;
 
-        int i = Mathf.Clamp(valueIndex[attackIndex, rowIndex], 0, row.buttons.Length - 1);
-        if (row.buttons[i] != null) row.buttons[i].Select();
+        if (row == null ||
+            row.buttons == null ||
+            row.buttons.Length == 0)
+            return;
+
+        int index = Mathf.Clamp(
+            valueIndex[attackIndex, rowIndex],
+            0,
+            row.buttons.Length - 1
+        );
+
+        // 現在の選択位置を維持
+        valueIndex[attackIndex, rowIndex] = index;
+
+        if (row.buttons[index] != null)
+            row.buttons[index].Select();
+
+        RefreshColors();
     }
-
     /// <summary>選ばれている値のボタンだけ赤、他は通常色にする</summary>
     // 選択状態の見た目を更新する
 
@@ -242,32 +256,18 @@ public class AttackCustom : MonoBehaviour
                 for (int i = 0; i < row.buttons.Length; i++)
                 {
                     Button button = row.buttons[i];
-                    if (button == null) continue;
 
-                    Image image = button.GetComponent<Image>();
-                    if (image == null) continue;
+                    if (button == null || button.image == null)
+                        continue;
 
-                    // 画像全体の色は変更しない
-                    image.color = Color.white;
+                    bool isSelected = i == valueIndex[a, r];
 
-                    // 選択中のボタンだけ中央を赤くする
-                    Material material = image.material;
-
-                    if (material != null &&
-                        material.HasProperty("_Selected"))
-                    {
-                        material.SetFloat(
-                            "_Selected",
-                            a == attackIndex &&
-                            r == rowIndex &&
-                            i == valueIndex[a, r] ? 1f : 0f
-                        );
-                    }
+                    button.image.color =
+                        isSelected ? selectedColor : normalColor;
                 }
             }
         }
     }
-
     // ---------- 値の取得・反映 ----------
 
 
