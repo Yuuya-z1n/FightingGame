@@ -26,14 +26,39 @@ public class AttackCustom : MonoBehaviour
     [Serializable]
     public class AttackBlock
     {
-        public string label;         // 小攻撃 / 中攻撃 / 大攻撃
-        public ButtonRow damage;     // 行0
-        public ButtonRow startup;    // 行1（発生）
-        public ButtonRow recovery;   // 行2（硬直）
+        public string label;
 
-        public ButtonRow GetRow(int i) => i == 0 ? damage : i == 1 ? startup : recovery;
+        public ButtonRow damage;
+        public ButtonRow startup;
+        public ButtonRow recovery;
+
+        [Header("項目ラベル")]
+        public RectTransform damageLabel;
+        public RectTransform startupLabel;
+        public RectTransform recoveryLabel;
+
+        public ButtonRow GetRow(int i)
+        {
+            if (i == 0) return damage;
+            if (i == 1) return startup;
+            if (i == 2) return recovery;
+
+            return null;
+        }
+
+        public RectTransform GetLabel(int i)
+        {
+            if (i == 0) return damageLabel;
+            if (i == 1) return startupLabel;
+            if (i == 2) return recoveryLabel;
+
+            return null;
+        }
     }
 
+    [Header("選択矢印")]
+    [SerializeField] RectTransform selectionArrow;
+    [SerializeField] Vector2 arrowOffset = new Vector2(-50f, 0f);
 
 
     static readonly string[] RowNames = { "ダメージ", "発生", "硬直" };
@@ -101,6 +126,14 @@ public class AttackCustom : MonoBehaviour
         kbNext?.Enable();
         kbNavigate?.Enable();
         kbDecide?.Enable();
+
+        // 入力のエッジ検出を初期化
+        lastX = 0;
+        lastY = 0;
+
+        // 選択状態と矢印を更新
+        RefreshColors();
+        SelectCurrentButton();
 
     }
 
@@ -235,6 +268,7 @@ public class AttackCustom : MonoBehaviour
             row.buttons[index].Select();
 
         RefreshColors();
+        UpdateSelectionArrow();
     }
     /// <summary>選ばれている値のボタンだけ赤、他は通常色にする</summary>
     // 選択状態の見た目を更新する
@@ -331,5 +365,24 @@ public class AttackCustom : MonoBehaviour
                 obj.SetActive(false);
         }
     }
+
+    void UpdateSelectionArrow()
+    {
+        if (selectionArrow == null ||
+            attacks == null ||
+            attackIndex < 0 ||
+            attackIndex >= attacks.Length ||
+            attacks[attackIndex] == null)
+            return;
+
+        RectTransform target = attacks[attackIndex].GetLabel(rowIndex);
+
+        if (target == null)
+            return;
+
+        selectionArrow.position =
+            target.position + (Vector3)arrowOffset;
+    }
+
 
 }
