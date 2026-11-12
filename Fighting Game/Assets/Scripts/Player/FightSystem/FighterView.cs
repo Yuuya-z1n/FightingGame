@@ -124,6 +124,14 @@ public class FighterView : MonoBehaviour
                 break;
 
             case FighterStateId.Jump:
+                anim.CrossFade("Jump", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.ForwardJump:
+                anim.CrossFade("ForwardJump", ChangeFrameTime(crossFrame));
+                break;
+
+            case FighterStateId.BackJump:
                 anim.CrossFade("BackJump", ChangeFrameTime(crossFrame));
                 break;
 

@@ -1667,16 +1667,21 @@ MonoBehaviour:
     chipCanKill: 1
     walkForwardSpeed: 83
     walkBackSpeed: 75
-    jumpSpeed: 350
+    jumpSpeed: 400
     jumpForwardSpeed: 83
     jumpBackSpeed: 75
-    gravity: 10
+    gravity: 15
     hitStunGroundFriction: 2
     downFrame: 40
     wakeUpFrame: 35
     throwTechFrames: 6
     throwEscFrames: 30
     throwEscPushSpeed: 120
+    stepInputFrames: 12
+    forwardStepSpeed: 130
+    forwardStepFrames: 16
+    backStepSpeed: 110
+    backStepFrames: 16
     inputBufferFrames: 6
     allowSpecialCancel: 1
     specialBindings:

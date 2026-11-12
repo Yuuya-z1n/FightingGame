@@ -103,7 +103,9 @@ namespace FightSim
         ForwardStep,
         BackStep,
         Crouch,         // しゃがみ
-        Jump,
+        Jump,           // 垂直
+        ForwardJump,    // 前飛び
+        BackJump,       // 後ろ飛び
         LightAttack,     // 弱攻撃
         MediumAttack,   // 中攻撃
         HeavyAttack,    // 強攻撃
