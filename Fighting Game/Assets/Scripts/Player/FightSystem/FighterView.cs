@@ -1,5 +1,5 @@
-using UnityEngine;
 using FightSim;
+using UnityEngine;
 using static MyFunctions.GlobalFunctions;
 
 /// <summary>
@@ -29,6 +29,10 @@ public class FighterView : MonoBehaviour
     private Vector3 prevPos;
     private Vector3 currPos;
 
+    // プレイヤーが2P側にいるかどうかでアニメーションを反転させる
+    private static readonly int mirrorHash = Animator.StringToHash("Mirror");
+    private bool hasMirrorParam;
+
     // FightingCamera などから参照される
     public bool IsGrounded { get; private set; }
     public bool FacingRight { get; private set; }
@@ -40,6 +44,18 @@ public class FighterView : MonoBehaviour
         groundTopY = CalcGroundTopY();
         anim = GetComponentInChildren<Animator>();
         if (anim == null) { Debug.LogError("FighterView の Animator が見当たりません。"); return; }
+
+        hasMirrorParam = HasBoolParam(anim, mirrorHash);
+        if(!hasMirrorParam) Debug.LogWarning($"{name}: Animator に Bool パラメータ \"Mirror\" がありません。");
+    }
+
+    private static bool HasBoolParam(Animator a, int hash)
+    {
+        foreach(AnimatorControllerParameter p in a.parameters)
+        {
+            if (p.nameHash == hash && p.type == AnimatorControllerParameterType.Bool) return true;
+        }
+        return false;
     }
 
     private float CalcGroundTopY()
@@ -50,11 +66,11 @@ public class FighterView : MonoBehaviour
             return 0f;
         }
 
-        // Collider があれば、その上面を使う
+        // Collider があれば上面を使う
         Collider col = groundObj.GetComponentInChildren<Collider>();
         if (col != null) return col.bounds.max.y;
 
-        // Collider がない場合は、オブジェクトの原点を床の上面とみなす
+        // Collider がない場合はオブジェクトの原点を床の上面とみなす
         Debug.LogWarning($"{name}: groundObj に Collider がないため、原点の Y を地面として使います。");
         return groundObj.position.y;
     }
@@ -75,7 +91,7 @@ public class FighterView : MonoBehaviour
         prevPos = currPos;
         ApplyDiscrete(s);
         transform.position = currPos;
-
+        AnimationChanger("Idle");
     }
 
     // シミュレーションが1ティック進むたびに呼ぶ
@@ -99,6 +115,7 @@ public class FighterView : MonoBehaviour
         FacingRight = s.facingRight;
         StateId = s.stateId;
         transform.rotation = Quaternion.Euler(0f, s.facingRight ? 0f : 180f, 0f);
+        if (hasMirrorParam) anim.SetBool(mirrorHash, !s.facingRight);
     }
 
     private void ApplyAnimation(FighterSimState s)
@@ -107,74 +124,103 @@ public class FighterView : MonoBehaviour
         if (s.stateId == StateId) return;
 
         Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
-
+        
 
         switch (s.stateId)
         {
+            // 立ち
             case FighterStateId.Idle:
                 AnimationChanger("Idle");
                 break;
 
+            // 前歩き
             case FighterStateId.WalkForward:
                 AnimationChanger("WalkForward");
                 break;
 
+            // 後ろ歩き
             case FighterStateId.WalkBack:
                 AnimationChanger("WalkBack");
                 break;
 
+            // 垂直飛び
             case FighterStateId.Jump:
                 AnimationChanger("Jump");
                 break;
 
+            // 前飛び
             case FighterStateId.ForwardJump:
                 AnimationChanger("ForwardJump");
                 break;
 
+            // 後ろ飛び
             case FighterStateId.BackJump:
                 AnimationChanger("BackJump");
                 break;
 
+            // 昇竜拳
             case FighterStateId.SpecialAttack1:
                 AnimationChanger("SpecialAttack1");
                 Debug.Log("昇竜拳！");
                 break;
 
+            // しゃがむ
             case FighterStateId.Crouch:
                 AnimationChanger("Crouch");
                 break;
 
+            // 倒れる
             case FighterStateId.Down:
             case FighterStateId.KO:
                 AnimationChanger("Down");
                 break;
 
+            // 起き上がる
             case FighterStateId.WakeUp:
                 AnimationChanger("WakeUp");
                 break;
 
-            case FighterStateId.Win:
-                AnimationChanger("Win");
-                break;
-
+            // 投げ
             case FighterStateId.ThrowAttack:
                 AnimationChanger("Throw");
                 break;
 
+            // 投げられ
             case FighterStateId.Thrown:
                 AnimationChanger("Throw_Uke");
                 break;
 
+            // 前ステップ
             case FighterStateId.ForwardStep:
                 AnimationChanger("ForwardStep");
                 break;
+
+            // 後ろステップ
+            case FighterStateId.BackStep:
+                AnimationChanger("BackStep");
+                break;
+
+            // 勝利ポーズ
+            case FighterStateId.Win:
+                AnimationChanger("Win");
+                break;
+
         }
 
     }
 
     private void AnimationChanger(string name)
     {
-        int crossFrame = 3;
-        anim.CrossFade(name, ChangeFrameTime(crossFrame));
+        int stateHash = Animator.StringToHash(name);
+        int layerIndex = 0;
+        if (anim.HasState(layerIndex, stateHash))
+        {
+            int crossFrame = 3;
+            anim.CrossFade(name, ChangeFrameTime(crossFrame));
+        }
+        else
+        {
+            Debug.LogError($"指定されたアニメーションが見つかりません {name}");
+        }
     }
 }

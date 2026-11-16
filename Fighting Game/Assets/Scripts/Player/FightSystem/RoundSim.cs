@@ -57,7 +57,7 @@ namespace FightSim
         private int wins1;
         private RoundEndReason endReason;
         private int roundWinner;    // 0 = 1P, 1 = 2P, -1 = 引き分け（RoundEnd / MatchEnd の時だけ意味がある）
-        private int matchWinner;    // 同上（MatchEnd の時だけ意味がある）
+        private int matchWinner;
         private bool simWasReset;
 
         public MatchSim Match { get { return sim; } }
@@ -150,7 +150,7 @@ namespace FightSim
                     // KO時、倒れる動きが終わるまで進める。タイムアップの場合は止める
                     if (endReason != RoundEndReason.TimeUp) sim.Tick(InputButtons.None, InputButtons.None);
                     if (endReason == RoundEndReason.KO && phaseFrame >= rp.winPoseDelayFrames) sim.TryEnterWin(roundWinner);
-                    if (phaseFrame >= rp.roundEndFrames) FinishRound();
+                    if (phaseFrame >= RoundEndLength) FinishRound();
                     break;
 
                 case RoundPhase.MatchEnd:

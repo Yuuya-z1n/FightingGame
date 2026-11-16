@@ -1804,6 +1804,10 @@ PrefabInstance:
       propertyPath: m_WarningMessage
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6824511350829718972, guid: 62660b37eff643a4dbfa345beb268ace, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: aab1ba24fba2741479d34952e713eed4, type: 2}
     - target: {fileID: 6871655057525652950, guid: 62660b37eff643a4dbfa345beb268ace, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
