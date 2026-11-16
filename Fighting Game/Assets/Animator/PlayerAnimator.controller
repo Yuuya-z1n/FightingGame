@@ -78,6 +78,32 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1102 &-7196933203599737119
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Win
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 7400000, guid: ac5e1deee6f0b284fbbae6a3fe80b6ef, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &-6153774443442071778
 AnimatorState:
   serializedVersion: 6
@@ -145,12 +171,64 @@ AnimatorState:
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
-  m_Mirror: 0
+  m_Mirror: 1
   m_SpeedParameterActive: 0
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 5c75701039296084fb07becd1460ad4f, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-1947020845706768480
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ForwardStep
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 1320225438281074345, guid: ee79d41a56d3c6a40b30298b7dc4e74c, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
+--- !u!1102 &-1216126631592243040
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: BackStep
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: -2437951309714035660, guid: 02b50feeb87236d4bab563da5585d3de, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -204,6 +282,32 @@ AnimatorController:
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
+--- !u!1102 &1457497189238582010
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Jump
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 156667609872136079, guid: 6f43b051991d18545b8bc4c227ed0b9a, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &2621480028775431039
 AnimatorState:
   serializedVersion: 6
@@ -285,19 +389,34 @@ AnimatorStateMachine:
     m_Position: {x: 800, y: 220, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6153774443442071778}
-    m_Position: {x: 1040, y: 160, z: 0}
+    m_Position: {x: 1100, y: 100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -547138552888589824}
-    m_Position: {x: 1040, y: 100, z: 0}
+    m_Position: {x: 500, y: 520, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2796292241039989019}
-    m_Position: {x: 1300, y: 100, z: 0}
+    m_Position: {x: 1100, y: 400, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4307631548939332271}
-    m_Position: {x: 1300, y: 160, z: 0}
+    m_Position: {x: 1100, y: 460, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5406628181669446354}
-    m_Position: {x: 500, y: 320, z: 0}
+    m_Position: {x: 500, y: 280, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 4281832170694320323}
+    m_Position: {x: 500, y: 220, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 1457497189238582010}
+    m_Position: {x: 500, y: 340, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -1947020845706768480}
+    m_Position: {x: 500, y: 400, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -7196933203599737119}
+    m_Position: {x: 800, y: 280, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -1216126631592243040}
+    m_Position: {x: 500, y: 460, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -308,6 +427,32 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 1030, y: -80, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -8468078970161265806}
+--- !u!1102 &4281832170694320323
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ForwardJump
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 8673769526774551580, guid: d4ec05a3db3c0154eb196568176461d9, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &4307631548939332271
 AnimatorState:
   serializedVersion: 6

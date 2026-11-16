@@ -44,7 +44,7 @@ public static class AttackDataLoader
                 knockbackX = ParseFloat(v, 10, row),                 // ノックバックX
                 knockbackY = ParseFloat(v, 11, row),                 // ノックバックY
                 hitStop = ParseInt(v, 12, row),                      // ヒットストップ（フレーム。ヒット・ガード共通）
-                hitStun = ParseInt(v, 13, row),                      // ヒットスタン（フレーム）
+                hitStun = ParseInt(v, 13, row),                      // ヒット時の相手の硬直
 
                 guardType = v.Length > 14 ? v[14].Trim() : "",       // ガード種別（High=上段 / Low=下段 / Throw=ガード不能）
                 blockStun = ParseInt(v, 15, row),                    // ガード硬直（フレーム）
