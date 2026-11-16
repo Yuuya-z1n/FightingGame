@@ -102,14 +102,14 @@ namespace FightSim
         WalkBack,
         ForwardStep,
         BackStep,
-        Crouch,         // しゃがみ
-        Jump,           // 垂直
-        ForwardJump,    // 前飛び
-        BackJump,       // 後ろ飛び
-        LightAttack,     // 弱攻撃
-        MediumAttack,   // 中攻撃
-        HeavyAttack,    // 強攻撃
-        SpecialAttack1, // 必殺技1(昇竜)
+        Crouch,             // しゃがみ
+        Jump,               // 垂直
+        ForwardJump,        // 前飛び
+        BackJump,           // 後ろ飛び
+        LightAttack,        // 弱攻撃
+        MediumAttack,       // 中攻撃
+        HeavyAttack,        // 強攻撃
+        SpecialAttack1,     // 必殺技1(昇竜)
         //SpecialAttack2, // 必殺技2
         //SpecialAttack3, // 必殺技3
 

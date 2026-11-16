@@ -75,6 +75,7 @@ public class FighterView : MonoBehaviour
         prevPos = currPos;
         ApplyDiscrete(s);
         transform.position = currPos;
+
     }
 
     // シミュレーションが1ティック進むたびに呼ぶ
@@ -107,60 +108,73 @@ public class FighterView : MonoBehaviour
 
         Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
 
-        int crossFrame = 3;
 
         switch (s.stateId)
         {
             case FighterStateId.Idle:
-                anim.CrossFade("Idle", ChangeFrameTime(crossFrame));
+                AnimationChanger("Idle");
                 break;
 
             case FighterStateId.WalkForward:
-                anim.CrossFade("WalkForward", ChangeFrameTime(crossFrame));
+                AnimationChanger("WalkForward");
                 break;
 
             case FighterStateId.WalkBack:
-                anim.CrossFade("WalkBack", ChangeFrameTime(crossFrame));
+                AnimationChanger("WalkBack");
                 break;
 
             case FighterStateId.Jump:
-                anim.CrossFade("Jump", ChangeFrameTime(crossFrame));
+                AnimationChanger("Jump");
                 break;
 
             case FighterStateId.ForwardJump:
-                anim.CrossFade("ForwardJump", ChangeFrameTime(crossFrame));
+                AnimationChanger("ForwardJump");
                 break;
 
             case FighterStateId.BackJump:
-                anim.CrossFade("BackJump", ChangeFrameTime(crossFrame));
+                AnimationChanger("BackJump");
                 break;
 
             case FighterStateId.SpecialAttack1:
-                anim.CrossFade("SpecialAttack1", ChangeFrameTime(crossFrame));
+                AnimationChanger("SpecialAttack1");
                 Debug.Log("昇竜拳！");
                 break;
 
             case FighterStateId.Crouch:
-                anim.CrossFade("Crouch", ChangeFrameTime(crossFrame));
+                AnimationChanger("Crouch");
                 break;
 
             case FighterStateId.Down:
             case FighterStateId.KO:
-                anim.CrossFade("Down", ChangeFrameTime(crossFrame));
+                AnimationChanger("Down");
                 break;
 
             case FighterStateId.WakeUp:
-                anim.CrossFade("WakeUp", ChangeFrameTime(crossFrame));
+                AnimationChanger("WakeUp");
+                break;
+
+            case FighterStateId.Win:
+                AnimationChanger("Win");
                 break;
 
             case FighterStateId.ThrowAttack:
-                anim.CrossFade("Throw", ChangeFrameTime(crossFrame));
+                AnimationChanger("Throw");
                 break;
 
             case FighterStateId.Thrown:
-                anim.CrossFade("Throw_Uke", ChangeFrameTime(crossFrame));
+                AnimationChanger("Throw_Uke");
+                break;
+
+            case FighterStateId.ForwardStep:
+                AnimationChanger("ForwardStep");
                 break;
         }
 
+    }
+
+    private void AnimationChanger(string name)
+    {
+        int crossFrame = 3;
+        anim.CrossFade(name, ChangeFrameTime(crossFrame));
     }
 }

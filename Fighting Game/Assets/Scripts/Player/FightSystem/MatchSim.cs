@@ -56,6 +56,17 @@ namespace FightSim
             InitFighter(1, p.startX, false);
         }
 
+        // 勝利ポーズに移る
+        public bool TryEnterWin(int index)
+        {
+            if (f[index].stateId != FighterStateId.Idle) return false;
+
+            f[index].stateId = FighterStateId.Win;
+            f[index].stateFrame = 0;
+            f[index].velX = 0;
+            return true;
+        }
+
         private void InitFighter(int i, int x, bool facingRight)
         {
             FighterSimState s = new FighterSimState();
