@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
 
 public class VolumeSettingsManager : MonoBehaviour
 {
@@ -16,12 +17,23 @@ public class VolumeSettingsManager : MonoBehaviour
     [SerializeField] private Slider seSlider;
 
     private const string MasterKey = "MasterVolume";
-    private const string BGMKey = "BGMVolume";
-    private const string SEKey = "SEVolume";
+    private const string BGMKey = "BgmVolume";
+    private const string SEKey = "SeVolume";
+    [Header("入力設定")]
+    [SerializeField] private InputActionReference navigateAction;
+
+    [Header("スライダー操作")]
+    [SerializeField] private float volumeStep = 0.05f;
+
+    private int selectedIndex = 0;
+
+    private Slider[] sliders;
 
     private void Awake()
     {
-        volumePanel.SetActive(false);
+        if (volumePanel != null)
+            volumePanel.SetActive(false);
+
         SetupSlider(masterSlider);
         SetupSlider(bgmSlider);
         SetupSlider(seSlider);
@@ -51,6 +63,32 @@ public class VolumeSettingsManager : MonoBehaviour
 
         if (seSlider != null)
             seSlider.onValueChanged.AddListener(ApplySEVolume);
+
+        sliders = new Slider[]
+        {
+            masterSlider,
+            bgmSlider,
+            seSlider
+        };
+
+        RefreshSliderSelection();
+    }
+    private void OnEnable()
+    {
+        if (navigateAction != null)
+        {
+            navigateAction.action.Enable();
+            navigateAction.action.performed += OnNavigate;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (navigateAction != null)
+        {
+            navigateAction.action.performed -= OnNavigate;
+            navigateAction.action.Disable();
+        }
     }
 
     private void OnDestroy()
@@ -72,6 +110,11 @@ public class VolumeSettingsManager : MonoBehaviour
         slider.minValue = 0f;
         slider.maxValue = 1f;
         slider.wholeNumbers = false;
+
+        // Unity標準の左右ナビゲーションを無効化
+        Navigation navigation = slider.navigation;
+        navigation.mode = Navigation.Mode.None;
+        slider.navigation = navigation;
     }
 
     private void ApplyMasterVolume(float value)
@@ -102,6 +145,73 @@ public class VolumeSettingsManager : MonoBehaviour
 
         audioMixer.SetFloat(parameter, decibels);
     }
+    private void OnNavigate(InputAction.CallbackContext context)
+    {
+        // パネルが開いていない場合は操作しない
+        if (volumePanel == null || !volumePanel.activeInHierarchy)
+            return;
+
+        if (sliders == null || sliders.Length == 0)
+            return;
+
+        Vector2 input = context.ReadValue<Vector2>();
+
+        // 上下入力：スライダーの選択切り替え
+        if (input.y > 0.5f)
+        {
+            selectedIndex--;
+            RefreshSliderSelection();
+            return;
+        }
+        else if (input.y < -0.5f)
+        {
+            selectedIndex++;
+            RefreshSliderSelection();
+            return;
+        }
+
+        // 左右入力：選択中のスライダーだけ変更
+        if (input.x > 0.5f)
+        {
+            ChangeVolume(volumeStep);
+        }
+        else if (input.x < -0.5f)
+        {
+            ChangeVolume(-volumeStep);
+        }
+    }
+
+    private void ChangeVolume(float amount)
+    {
+        if (sliders == null || sliders.Length == 0)
+            return;
+
+        Slider slider = sliders[selectedIndex];
+
+        if (slider == null)
+            return;
+
+        slider.value = Mathf.Clamp(
+            slider.value + amount,
+            slider.minValue,
+            slider.maxValue
+        );
+    }
+
+    private void RefreshSliderSelection()
+    {
+        if (sliders == null || sliders.Length == 0)
+            return;
+
+        // 選択番号を0～2の範囲に収める
+        selectedIndex = (selectedIndex + sliders.Length) % sliders.Length;
+
+        // nullでないスライダーを選択する
+        if (sliders[selectedIndex] != null)
+        {
+            sliders[selectedIndex].Select();
+        }
+    }
 
     private void SaveVolume(string key, float value)
     {
@@ -111,7 +221,14 @@ public class VolumeSettingsManager : MonoBehaviour
 
     public void OpenVolumePanel()
     {
+        if (volumePanel == null)
+            return;
+
         volumePanel.SetActive(true);
+
+        // パネルを開いたらMasterスライダーを選択
+        selectedIndex = 0;
+        RefreshSliderSelection();
     }
 
     public void CloseVolumePanel()
@@ -119,17 +236,4 @@ public class VolumeSettingsManager : MonoBehaviour
         if (volumePanel != null)
             volumePanel.SetActive(false);
     }
-
-    //public void OpenVolumePanel()
-    //{
-    //    if (volumePanel != null)
-    //    {
-    //        volumePanel.SetActive(true);
-    //        Debug.Log("音量設定UIを開きました");
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("VolumePanelが設定されていません");
-    //    }
-    //}
 }
