@@ -34,7 +34,24 @@ public class SpecialCustom : MonoBehaviour
 
             return null;
         }
+
+        [Header("項目ラベル")]
+        public RectTransform damageLabel;
+        public RectTransform startupLabel;
+        public RectTransform recoveryLabel;
+
+        public RectTransform GetLabel(int index)
+        {
+            if (index == 0) return damageLabel;
+            if (index == 1) return startupLabel;
+            if (index == 2) return recoveryLabel;
+
+            return null;
+        }
     }
+    [Header("選択矢印")]
+    [SerializeField] RectTransform selectionArrow;
+    [SerializeField] Vector2 arrowOffset = new Vector2(-50f, 0f);
 
     [Header("必殺技の設定")]
     [SerializeField]
@@ -118,10 +135,10 @@ public class SpecialCustom : MonoBehaviour
 
     void OnDisable()
     {
-        Disable(prevAttackAction);
-        Disable(nextAttackAction);
-        Disable(navigateAction);
-        Disable(decideAction);
+        //Disable(prevAttackAction);
+        //Disable(nextAttackAction);
+        //Disable(navigateAction);
+        //Disable(decideAction);
 
         kbPrev?.Disable();
         kbNext?.Disable();
@@ -279,6 +296,10 @@ public class SpecialCustom : MonoBehaviour
 
         if (row.buttons[index] != null)
             row.buttons[index].Select();
+
+
+        // 矢印を現在の項目に移動
+        UpdateSelectionArrow();
     }
 
     void RefreshColors()
@@ -371,5 +392,24 @@ public class SpecialCustom : MonoBehaviour
             $"項目：{rowNames[rowIndex]} / " +
             $"値：{GetValue(attackIndex, rowIndex)}"
         );
+    }
+
+    void UpdateSelectionArrow()
+    {
+        if (selectionArrow == null ||
+            specialAttacks == null ||
+            attackIndex < 0 ||
+            attackIndex >= specialAttacks.Length ||
+            specialAttacks[attackIndex] == null)
+            return;
+
+        RectTransform target =
+            specialAttacks[attackIndex].GetLabel(rowIndex);
+
+        if (target == null)
+            return;
+
+        selectionArrow.position =
+            target.position + (Vector3)arrowOffset;
     }
 }
