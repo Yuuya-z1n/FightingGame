@@ -360,9 +360,9 @@ MonoBehaviour:
       - {fileID: 2763007628637535125}
       optionValues: 150000001e00000022000000
     specialAttacsDuration: 8
-    damageLabel: {fileID: 0}
-    startupLabel: {fileID: 0}
-    recoveryLabel: {fileID: 0}
+    damageLabel: {fileID: 4402511699407698455}
+    startupLabel: {fileID: 2145307069262984030}
+    recoveryLabel: {fileID: 3476889827103540094}
   prevAttackAction: {fileID: -8023078811613711403, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
   nextAttackAction: {fileID: 4552871292314620518, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
   navigateAction: {fileID: 6166561439245464661, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
@@ -3693,6 +3693,7 @@ GameObject:
   - component: {fileID: 3960551965726587320}
   - component: {fileID: 6661308646836712968}
   - component: {fileID: 4418188427337312179}
+  - component: {fileID: 2630720562989415441}
   m_Layer: 0
   m_Name: MenuManager
   m_TagString: Untagged
@@ -3752,7 +3753,7 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   openMenu: 0
-  dummySettings: {fileID: 0}
+  dummySettings: {fileID: 4418188427337312179}
 --- !u!114 &4332973114335858263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3825,17 +3826,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dummyPanel: {fileID: 4360024782933490529}
-  menuAction: {fileID: 0}
+  menuAction: {fileID: 144941778690397465, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
   selectAction: {fileID: 6166561439245464661, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
   decideAction: {fileID: 780567854391031369, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
-  backAction: {fileID: 0}
+  backAction: {fileID: -8735557812320017539, guid: a8c4a2c4783eee84587c9c22893a840a, type: 3}
   guardDropdown: {fileID: 1304190252787369904}
   hitDropdown: {fileID: 556537200586505518}
   throwEscapeToggle: {fileID: 3492066765669489502}
-  guardResultText: {fileID: 0}
-  hitResultText: {fileID: 0}
+  guardResultText: {fileID: 6717479188442226632}
+  hitResultText: {fileID: 3623067389758154959}
   NormalColor: {r: 1, g: 1, b: 1, a: 1}
   SelectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!114 &2630720562989415441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2994035621443791802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3019c5c30518554408cf51bde7d215b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  titleSceneName: Title
 --- !u!1 &3060047281618595337
 GameObject:
   m_ObjectHideFlags: 0
@@ -6718,9 +6732,9 @@ MonoBehaviour:
       - {fileID: 139303207215639303}
       - {fileID: 4923161660879182643}
       optionValues: 08000000090000000a000000
-    damageLabel: {fileID: 0}
-    startupLabel: {fileID: 0}
-    recoveryLabel: {fileID: 0}
+    damageLabel: {fileID: 6679563625308255992}
+    startupLabel: {fileID: 5708364421001546608}
+    recoveryLabel: {fileID: 3938408711248703695}
   - label: "\u4E2D\u653B\u6483"
     damage:
       buttons:
@@ -6740,9 +6754,9 @@ MonoBehaviour:
       - {fileID: 8137556809714589283}
       - {fileID: 3829624618075570965}
       optionValues: 0d0000000f00000013000000
-    damageLabel: {fileID: 0}
-    startupLabel: {fileID: 0}
-    recoveryLabel: {fileID: 0}
+    damageLabel: {fileID: 1740942176528031051}
+    startupLabel: {fileID: 6522734673685332918}
+    recoveryLabel: {fileID: 8086997306340916217}
   - label: "\u5927\u653B\u6483"
     damage:
       buttons:
@@ -6762,9 +6776,9 @@ MonoBehaviour:
       - {fileID: 7876337270611017543}
       - {fileID: 8290683110994334493}
       optionValues: 100000001300000016000000
-    damageLabel: {fileID: 0}
-    startupLabel: {fileID: 0}
-    recoveryLabel: {fileID: 0}
+    damageLabel: {fileID: 4688907687051994628}
+    startupLabel: {fileID: 7604822945871455122}
+    recoveryLabel: {fileID: 8664585033871432613}
   smallAttackDuration: 2
   mediumAttackDuration: 3
   largeAttackDuration: 4
@@ -7172,13 +7186,13 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 2630720562989415441}
+        m_TargetAssemblyTypeName: TitleMenu, Assembly-CSharp
+        m_MethodName: GoToTitle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

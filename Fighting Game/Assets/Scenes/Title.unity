@@ -1000,7 +1000,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: 7d8de65cf8fef394bb999e909f6e1e33, type: 2}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 636dbeae0ad6fe54eb5a32ef89415b2f, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -1098,14 +1098,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 172ff64d973c8bc4bb0e94afeeda1628, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioMixer: {fileID: 0}
+  bgmGroup: {fileID: 0}
+  seGroup: {fileID: 0}
   bgmList:
-  - name: 
+  - name: Title
     clip: {fileID: 8300000, guid: 636dbeae0ad6fe54eb5a32ef89415b2f, type: 3}
     volume: 0
-  - name: 
-    clip: {fileID: 8300000, guid: 7fe271d4453f7f640a32905ab835fe6d, type: 3}
-    volume: 0
   battleSeList:
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  systemSeList:
+  - name: 
+    clip: {fileID: 8300000, guid: 6fea0be732e3848408c11bac6a85d3ac, type: 3}
+    volume: 0
   - name: 
     clip: {fileID: 8300000, guid: b70043890c7a241468c19442815844d8, type: 3}
     volume: 0
@@ -1115,16 +1131,22 @@ MonoBehaviour:
   - name: 
     clip: {fileID: 8300000, guid: 3810abcb5cf21aa43b120fc27e7f8324, type: 3}
     volume: 0
+  menuSeList:
   - name: 
-    clip: {fileID: 8300000, guid: 6fea0be732e3848408c11bac6a85d3ac, type: 3}
+    clip: {fileID: 0}
     volume: 0
-  systemSeList: []
-  menuSeList: []
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
+  - name: 
+    clip: {fileID: 0}
+    volume: 0
   sceneBgmList:
   - sceneName: Title
     bgmName: Title
-  - sceneName: Title
-    bgmName: Title2
 --- !u!4 &1377994540
 Transform:
   m_ObjectHideFlags: 0
