@@ -1,5 +1,4 @@
 using FightSim;
-using Fusion;
 using UnityEngine;
 
 /// <summary>

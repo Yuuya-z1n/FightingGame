@@ -14,10 +14,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Photon/FusionMenu/FusionSampleMenu.unity
     guid: 74c3b330900a03442806ce69f1fe5955
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/AttackCustom.unity
     guid: 079c41cc5608b014c81eeade3d8bbb7e
   - enabled: 0
     path: Assets/Scenes/StandbyScene.unity
     guid: ac6d5ede0b03b684d9a80b33ef8fd94e
+  - enabled: 1
+    path: Assets/Scenes/GameScene.unity
+    guid: 07ae2d672596a0245bf00267d1175e65
   m_configObjects: {}
