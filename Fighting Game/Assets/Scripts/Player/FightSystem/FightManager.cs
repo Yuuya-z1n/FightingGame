@@ -41,6 +41,11 @@ public class FightManager : MonoBehaviour
     public RoundSim Round { get { return round; } }
     public int MaxHealth { get { return fighterParams.maxHealth; } }
 
+    // ネットワーク関係
+    // trueの場合はローカルのTickを進めない
+    public bool NetworkDriven { get; private set; }
+    public void SetNetworkDriven(bool value) { NetworkDriven = value; }
+
     private void Awake()
     {
         ValidateSpecialBindings();
@@ -98,7 +103,7 @@ public class FightManager : MonoBehaviour
 
     private void Update()
     {
-        if (sim == null) return;
+        if (sim == null || NetworkDriven) return;
 
         if (enableResetKey && Input.GetKeyDown(KeyCode.R)) ResetMatch();
 
@@ -141,10 +146,23 @@ public class FightManager : MonoBehaviour
         SnapViews();
     }
 
-    private void SnapViews()
+    public void SnapViews()
     {
         if (view1 != null) view1.Snap(sim.Get(0));
         if (view2 != null) view2.Snap(sim.Get(1));
+    }
+
+    // ネットでのsim状態を反映する
+    public void PushViews()
+    {
+        if (view1 != null) view1.PushState(sim.Get(0));
+        if (view2 != null) view2.PushState(sim.Get(1));
+    }
+
+    public void RenderViews(float alpha)
+    {
+        if (view1 != null) view1.Render(alpha);
+        if (view2 != null) view2.Render(alpha);
     }
 
     // ---- 判定ボックスの可視化 ----
