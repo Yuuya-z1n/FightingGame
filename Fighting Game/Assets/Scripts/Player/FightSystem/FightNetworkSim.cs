@@ -12,6 +12,12 @@ public class FightNetworkSim : NetworkBehaviour
     [Networked] private ushort LastInput0 { get; set; }
     [Networked] private ushort LastInput1 { get; set; }
 
+    // 診断用
+    public int FightTicks { get; private set; }
+    public int MissingInputTicks { get; private set; }
+    public int MaxMissingStreak { get; private set; }
+    private int missingStreak;
+
     private FightManager manager;
     private int lastFrame = -1;
     private float lastPushTime;
@@ -60,8 +66,23 @@ public class FightNetworkSim : NetworkBehaviour
         // Fusion が保持している状態から始める
         round.Load(NetSimConvert.FromNet(State));
 
-        ushort b0 = ReadButtons(Player0, LastInput0);
-        ushort b1 = ReadButtons(Player1, LastInput1);
+        bool missing0, missing1;
+        ushort b0 = ReadButtons(Player0, LastInput0, out missing0);
+        ushort b1 = ReadButtons(Player1, LastInput1, out missing1);
+        if (Object.HasStateAuthority && round.Phase == RoundPhase.Fight)
+        {
+            FightTicks++;
+            if(missing1)
+            {
+                MissingInputTicks++;
+                missingStreak++;
+                if (missingStreak > MaxMissingStreak) MaxMissingStreak = missingStreak;
+            }
+            else
+            {
+                missingStreak = 0;
+            }
+        }
         LastInput0 = b0;
         LastInput1 = b1;
 
@@ -74,12 +95,15 @@ public class FightNetworkSim : NetworkBehaviour
 
     // そのティックの入力を読む。無ければ直前の入力を使う
     // クライアントは相手の入力を受け取れないので予測の間は相手の直前の入力を使い続ける
-    private ushort ReadButtons(PlayerRef player, ushort last)
+    private ushort ReadButtons(PlayerRef player, ushort last, out bool missing)
     {
+        missing = false;
         if (player == PlayerRef.None) return last;
 
         NetInput input;
         if (Runner.TryGetInputForPlayer<NetInput>(player, out input)) return input.buttons;
+
+        missing = true;
         return last;
     }
 

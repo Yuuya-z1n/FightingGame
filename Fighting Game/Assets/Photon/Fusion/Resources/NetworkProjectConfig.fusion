@@ -49,16 +49,16 @@
         "RedundantSnapshots": 1.0,
         "StateReceiveBufferDelayAdded": 0,
         "StateReceiveBufferDelayAddedUnit": 0,
-        "InputReceiveBufferSettings": 0,
+        "InputReceiveBufferSettings": 1,
         "MaxLateInputs": 5.0,
         "RedundantInputs": 1.0,
-        "InputReceiveBufferDelayAdded": 0,
+        "InputReceiveBufferDelayAdded": 3,
         "InputReceiveBufferDelayAddedUnit": 0,
-        "InputDelaySettings": 0,
-        "MinimumInputDelay": 0,
+        "InputDelaySettings": 1,
+        "MinimumInputDelay": 3,
         "MinimumInputDelayUnit": 0,
-        "ClientsCanAddInputDelayToLimitResims": false,
-        "ClientMaxResimsPerFrame": -1
+        "ClientsCanAddInputDelayToLimitResims": true,
+        "ClientMaxResimsPerFrame": 6
     },
     "Network": {
         "ConnectionTimeout": 10.0,
