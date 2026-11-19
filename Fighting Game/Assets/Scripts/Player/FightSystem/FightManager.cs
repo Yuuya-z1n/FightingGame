@@ -21,6 +21,9 @@ public class FightManager : MonoBehaviour
     [Header("シミュレーション設定（位置の単位: 1000 = 1ワールド単位）")]
     [SerializeField] private FighterParams fighterParams = new FighterParams();
 
+    [Header("ラウンド設定")]
+    [SerializeField] private RoundParams roundParams = new RoundParams();
+
     [Header("デバッグ")]
     [SerializeField] private bool showBoxes = true;
     [SerializeField] private bool enableResetKey = true; // R キーで試合をやり直す
@@ -29,17 +32,26 @@ public class FightManager : MonoBehaviour
     private const int MaxTicksPerFrame = 4; // 処理落ち時に溜まった分を一気に消化しすぎない
 
     private MatchSim sim;
+    private RoundSim round;
     private LocalInputSource input1;
     private LocalInputSource input2;
     private float accumulator;
 
     public MatchSim Sim { get { return sim; } }
+    public RoundSim Round { get { return round; } }
+    public int MaxHealth { get { return fighterParams.maxHealth; } }
+
+    // ネットワーク関係
+    // trueの場合はローカルのTickを進めない
+    public bool NetworkDriven { get; private set; }
+    public void SetNetworkDriven(bool value) { NetworkDriven = value; }
 
     private void Awake()
     {
         ValidateSpecialBindings();
         AttackFrameData[] attacks = LoadAttackTable();
         sim = new MatchSim(fighterParams, attacks);
+        round = new RoundSim(sim, roundParams);
         input1 = new LocalInputSource(0);
         input2 = new LocalInputSource(1);
     }
@@ -91,7 +103,7 @@ public class FightManager : MonoBehaviour
 
     private void Update()
     {
-        if (sim == null) return;
+        if (sim == null || NetworkDriven) return;
 
         if (enableResetKey && Input.GetKeyDown(KeyCode.R)) ResetMatch();
 
@@ -117,22 +129,40 @@ public class FightManager : MonoBehaviour
 
     private void StepOneTick()
     {
-        sim.Tick(input1.Consume(), input2.Consume());
+        round.Tick(input1.Consume(), input2.Consume());
+        if(round.SimWasReset)
+        {
+            SnapViews();
+            return;
+        }
         if (view1 != null) view1.PushState(sim.Get(0));
         if (view2 != null) view2.PushState(sim.Get(1));
     }
 
     public void ResetMatch()
     {
-        sim.Reset();
+        round.ResetMatch();
         accumulator = 0f;
         SnapViews();
     }
 
-    private void SnapViews()
+    public void SnapViews()
     {
         if (view1 != null) view1.Snap(sim.Get(0));
         if (view2 != null) view2.Snap(sim.Get(1));
+    }
+
+    // ネットでのsim状態を反映する
+    public void PushViews()
+    {
+        if (view1 != null) view1.PushState(sim.Get(0));
+        if (view2 != null) view2.PushState(sim.Get(1));
+    }
+
+    public void RenderViews(float alpha)
+    {
+        if (view1 != null) view1.Render(alpha);
+        if (view2 != null) view2.Render(alpha);
     }
 
     // ---- 判定ボックスの可視化 ----

@@ -1,5 +1,4 @@
 using System;
-using UnityEditor;
 
 namespace FightSim
 {
@@ -54,6 +53,17 @@ namespace FightSim
             lastCheck[1] = new HitCheckLog();
             InitFighter(0, -p.startX, true);
             InitFighter(1, p.startX, false);
+        }
+
+        // 勝利ポーズに移る
+        public bool TryEnterWin(int index)
+        {
+            if (f[index].stateId != FighterStateId.Idle) return false;
+
+            f[index].stateId = FighterStateId.Win;
+            f[index].stateFrame = 0;
+            f[index].velX = 0;
+            return true;
         }
 
         private void InitFighter(int i, int x, bool facingRight)
@@ -223,6 +233,8 @@ namespace FightSim
                     break;
 
                 case FighterStateId.Jump:
+                case FighterStateId.ForwardJump:
+                case FighterStateId.BackJump:
                     TryStartAttack(ref s, true);
                     break;
 
@@ -533,18 +545,19 @@ namespace FightSim
 
         private void StartJump(ref FighterSimState s, int dx)
         {
-            s.stateId = FighterStateId.Jump;
             s.stateFrame = 0;
             s.velY = p.jumpSpeed;
 
             if (dx == 0)
             {
                 s.velX = 0;
+                s.stateId = FighterStateId.Jump;
             }
             else
             {
                 bool forward = (dx > 0) == s.facingRight;
                 s.velX = dx * (forward ? p.jumpForwardSpeed : p.jumpBackSpeed);
+                s.stateId = forward ? FighterStateId.ForwardJump : FighterStateId.BackJump;
             }
         }
 
@@ -557,6 +570,12 @@ namespace FightSim
             }
         }
 
+        private FighterStateId AirborneState(FighterSimState s)
+        {
+            if (s.velX == 0) return FighterStateId.Jump;
+            return ((s.velX > 0) == s.facingRight) ? FighterStateId.ForwardJump : FighterStateId.BackJump;
+        }
+
         private void EndToNeutral(ref FighterSimState s)
         {
             s.attackIndex = -1;
@@ -564,7 +583,7 @@ namespace FightSim
             s.stateFrame = 0;
             s.knockdown = false;
             s.comboCount = 0;
-            s.stateId = s.Grounded ? FighterStateId.Idle : FighterStateId.Jump;
+            s.stateId = s.Grounded ? FighterStateId.Idle : AirborneState(s);
         }
 
         // 重力・位置の更新・着地
@@ -598,6 +617,8 @@ namespace FightSim
             switch (s.stateId)
             {
                 case FighterStateId.Jump:
+                case FighterStateId.ForwardJump:
+                case FighterStateId.BackJump:
                     s.velX = 0;
                     s.stateId = FighterStateId.Idle;
                     s.stateFrame = 0;
