@@ -24,6 +24,9 @@ public class MenuManager : MonoBehaviour
 
     public bool openMenu;
 
+    // 子メニューをMenuボタンから開いたか
+    private bool openedFromMenuButton = false;
+
     private int selectedIndex = 0;
     private int lastY = 0;
     [SerializeField] private DummySettings dummySettings;   // Inspectorで登録
@@ -79,14 +82,7 @@ public class MenuManager : MonoBehaviour
     }
     void Update()
     {
-        //if (decideAction == null || decideAction.action == null)
-        //{
-        //    Debug.LogError("Decide Action が設定されていません");
-        //}
-        //else if (!decideAction.action.enabled)
-        //{
-        //    Debug.LogWarning("Decide Action が無効です");
-        //}
+ 
 
         // Menuボタンでメニューを開閉
         if (Pressed(menuAction))
@@ -133,11 +129,6 @@ public class MenuManager : MonoBehaviour
             input = Gamepad.current.dpad.ReadValue();
         }
 
-        //// 十字キーが押されている場合だけログを表示
-        //if (input.sqrMagnitude > 0.25f)
-        //{
-        //    Debug.Log("十字キー入力: " + input);
-        //}
 
         // 上下の入力を判定
         int y = input.y > 0.5f ? 1 :
@@ -173,7 +164,38 @@ public class MenuManager : MonoBehaviour
 
         bool isOpening = !menuPanel.activeSelf;
 
-        if (isOpening && childMenuPanels != null)
+        if (isOpening)
+        {
+            // Menuボタンから開いた場合、子メニューをすべて閉じる
+            CloseAllChildMenus();
+
+            openedFromMenuButton = true;
+
+            menuPanel.SetActive(true);
+            openMenu = true;
+
+            selectedIndex = 0;
+            RefreshSelection();
+        }
+        else
+        {
+            menuPanel.SetActive(false);
+            openMenu = false;
+        }
+    }
+    void CloseAllChildMenus()
+    {
+        // 独自の閉じる処理を持つメニュー
+        foreach (IChildMenu menu in childMenus)
+        {
+            if (menu != null && menu.IsOpen)
+            {
+                menu.CloseMenu();
+            }
+        }
+
+        // 通常の子メニューパネル
+        if (childMenuPanels != null)
         {
             foreach (GameObject panel in childMenuPanels)
             {
@@ -181,20 +203,7 @@ public class MenuManager : MonoBehaviour
                     panel.SetActive(false);
             }
         }
-
-        menuPanel.SetActive(isOpening);
-        openMenu = isOpening;
-
-        if (isOpening)
-        {
-            if (decideAction != null && decideAction.action != null)
-                decideAction.action.Enable();
-
-            selectedIndex = 0;
-            RefreshSelection();
-        }
     }
-
     void MoveSelection(int direction)
     {
         if (menuButtons == null || menuButtons.Length == 0)
@@ -278,18 +287,38 @@ public class MenuManager : MonoBehaviour
     {
         bool closedAny = false;
 
-        // 独自の閉じる処理を持つメニュー
-        foreach (IChildMenu menu in childMenus)
+        // Menuボタンから開いた場合
+        if (openedFromMenuButton)
         {
-            if (menu == null || !menu.IsOpen)
-                continue;
+            CloseAllChildMenus();
 
-            menu.CloseMenu();
-            closedAny = true;
-            Debug.Log("子メニューを閉じました");
+            openedFromMenuButton = false;
+
+            // MenuPanelを開く
+            if (menuPanel != null)
+            {
+                menuPanel.SetActive(true);
+                openMenu = true;
+
+                selectedIndex = 0;
+                RefreshSelection();
+            }
+
+            Debug.Log("Menuボタン経由：すべての子メニューを閉じてMenuPanelに戻りました");
+
+            return true;
         }
 
-        // 独自処理のない従来のパネル
+        // Menuボタン以外から開いた場合
+        foreach (IChildMenu menu in childMenus)
+        {
+            if (menu != null && menu.IsOpen)
+            {
+                menu.CloseMenu();
+                closedAny = true;
+            }
+        }
+
         if (childMenuPanels != null)
         {
             foreach (GameObject panel in childMenuPanels)
@@ -298,9 +327,22 @@ public class MenuManager : MonoBehaviour
                 {
                     panel.SetActive(false);
                     closedAny = true;
-                    Debug.Log(panel.name + " を閉じました");
                 }
             }
+        }
+
+        if (closedAny)
+        {
+            if (menuPanel != null)
+            {
+                menuPanel.SetActive(true);
+                openMenu = true;
+
+                selectedIndex = 0;
+                RefreshSelection();
+            }
+
+            Debug.Log("子メニューを閉じてMenuPanelに戻りました");
         }
 
         return closedAny;
