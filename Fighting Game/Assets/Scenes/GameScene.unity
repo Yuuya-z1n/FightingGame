@@ -2564,7 +2564,7 @@ MonoBehaviour:
   view2: {fileID: 1262139240}
   csvResourceName: test
   fighterParams:
-    maxHealth: 10000
+    maxHealth: 2147483647
     chipCanKill: 1
     walkForwardSpeed: 83
     walkBackSpeed: 75
@@ -2600,7 +2600,7 @@ MonoBehaviour:
     startX: 3000
   roundParams:
     roundsToWin: 2
-    roundTimeSeconds: 99
+    roundTimeSeconds: 0
     introFrames: 180
     roundEndFrames: 180
     winPoseDelayFrames: 180

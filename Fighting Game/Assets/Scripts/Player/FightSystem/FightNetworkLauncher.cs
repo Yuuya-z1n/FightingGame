@@ -10,7 +10,10 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private FightManager manager;
     [SerializeField] private NetworkPrefabRef simPrefab;
 
-    private const int playerCount = 2;
+    private const int playerCount = 2; 
+    
+    // 診断用
+    private FightNetworkSim diagSim;
 
     private NetworkRunner activeRunner;
     private GameObject runnerObject;
@@ -37,7 +40,7 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
         if (manager != null) manager.SetNetworkDriven(true);
 
         runnerObject = new GameObject("NetworkRunner");
-        runnerObject.transform.SetParent(transform);
+        //runnerObject.transform.SetParent(transform);
         activeRunner = runnerObject.AddComponent<NetworkRunner>();
         activeRunner.AddCallbacks(this);
         activeRunner.ProvideInput = true;
@@ -61,7 +64,31 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
             return;
         }
 
+        Debug.Log("Session : " + activeRunner.SessionInfo);
         status = activeRunner.IsServer ? "Waiting for opponent... (Host)" : "Connected (Client)";
+    }
+
+    // 診断用
+    private string RegionTag()
+    {
+        if (activeRunner == null) return "";
+        return " [" + activeRunner.SessionInfo.Region + "]";
+    }
+
+    private string RttText()
+    {
+        if (activeRunner == null) return "";
+
+        double rtt = 0;
+        if(activeRunner.IsServer)
+        {
+            if (joined.Count >= 2) rtt = activeRunner.GetPlayerRtt(joined[1]);
+        }
+        else
+        {
+            rtt = activeRunner.GetPlayerRtt(PlayerRef.None);
+        }
+        return "RTT : " + (rtt * 1000.0).ToString("F0") + " ms";
     }
 
     // 接続前の状態に戻す
@@ -95,6 +122,17 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
         }
 
         GUI.Label(new Rect(cx - 150, 60, 300, 24), status);
+        GUI.Label(new Rect(cx - 150, 108, 300, 24), RttText());
+
+        // 診断用 : ホストの画面にクライアントの入力が間に合わなかった回数を出す
+        if (diagSim == null) diagSim = FindFirstObjectByType<FightNetworkSim>();
+        if(diagSim != null && activeRunner != null && activeRunner.IsServer)
+        {
+            int f = Mathf.Max(1, diagSim.FightTicks);
+
+            GUI.Label(new Rect(cx - 150, 84, 360, 24), "Client input missing : " + diagSim.MissingInputTicks
+                + " / " + f + " (" + (100f * diagSim.MissingInputTicks / f). ToString("F1") + "%) max streak : " + diagSim.MaxMissingStreak);
+        }
     }
 
     // ----------------------------------
@@ -106,7 +144,7 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
         if (!runner.IsServer) return; // 生成できるのはホストだけ
 
         joined.Add(player);
-        status = "Players: " + joined.Count + "/" + playerCount + " (Host)";
+        status = "Players: " + joined.Count + "/" + playerCount + " (Host)" + RegionTag();
 
         if (joined.Count == playerCount && !simSpawned)
         {
@@ -117,7 +155,7 @@ public class FightNetworkLauncher : MonoBehaviour, INetworkRunnerCallbacks
             runner.Spawn(simPrefab, Vector3.zero, Quaternion.identity, null,
                 (r, obj) => obj.GetComponent<FightNetworkSim>().Init(p0, p1));
 
-            status = "Fight! (Host = P1)";
+            status = "Fight! (Host = P1)" + RegionTag();
         }
     }
 

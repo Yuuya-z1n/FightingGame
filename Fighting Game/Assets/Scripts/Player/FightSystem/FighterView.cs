@@ -123,7 +123,7 @@ public class FighterView : MonoBehaviour
         // 直前が同じであれば早期リターン
         if (s.stateId == StateId) return;
 
-        Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
+        //Debug.Log($"アニメーションが変わりました。{StateId} -> {s.stateId}");
         
 
         switch (s.stateId)
@@ -158,10 +158,24 @@ public class FighterView : MonoBehaviour
                 AnimationChanger("BackJump");
                 break;
 
+            // 立ち小P
+            case FighterStateId.LightAttack:
+                AnimationChanger("Stand_Light");
+                break;
+
+            // 立ち中P
+            case FighterStateId.MediumAttack:
+                AnimationChanger("Stand_Medium");
+                break;
+
+            // 立ち大K
+            case FighterStateId.HeavyAttack:
+                AnimationChanger("Stand_Heavy");
+                break;
+
             // 昇竜拳
             case FighterStateId.SpecialAttack1:
                 AnimationChanger("SpecialAttack1");
-                Debug.Log("昇竜拳！");
                 break;
 
             // しゃがむ
